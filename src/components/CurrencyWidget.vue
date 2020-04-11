@@ -1,12 +1,12 @@
 <template>
-  <div id="header">
+  <div id="currencyWidget">
       {{ data }}
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Header',
+  name: 'CurrencyWidget',
   props: {
     data: String
   }
@@ -15,9 +15,11 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-    #header {
-        height: 60px;
-        background-color: #1d2432;
+    #currencyWidget {
+        height: 350px;
+        width: 270px;
+        margin: 1em;
+        background-color: #33394c;
     }
 
 </style>
