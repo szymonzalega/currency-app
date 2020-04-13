@@ -56,7 +56,7 @@ export default {
 
   &__box {
     display: flex;
-    width: 90vw;
+    width: 80vw;
     max-width: 400px;
     height: 320px;
     flex-direction: column;
