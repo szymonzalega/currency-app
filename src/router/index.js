@@ -30,6 +30,10 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+  },
+  {
+    path: '*',
+    redirect: '/dashboard'
   }
 ]
 
@@ -45,7 +49,7 @@ router.beforeEach((to, from, next) => {
   let guestOnly = to.matched.some(record => record.meta.guestOnly)
 
   if (requireAuth && !currentUser) next('login')
-  else if (guestOnly && currentUser) next('/dashboard')
+  else if (guestOnly && currentUser) next('dashboard')
   else next()
 })
 

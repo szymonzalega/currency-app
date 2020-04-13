@@ -1,7 +1,11 @@
 <template>
   <div class="login">
-    <!-- <div class="login__button" v-on:click="login()">Zaloguj się</div> -->
-    <div id="firebaseui-auth-container"></div>
+    <div class="login__appName">Currency App</div>
+    <div class="login__box">
+      <div class="login__box__logo">$</div>
+      <span class="login__box__text">Witaj w naszej aplikacji!</span>
+      <div id="firebaseui-auth-container"></div>
+    </div>
   </div>
 </template>
 
@@ -12,8 +16,8 @@ import auth from "@/auth";
 export default {
   name: "Login",
   mounted() {
-      auth.authForm('#firebaseui-auth-container')
-    },
+    auth.authForm("#firebaseui-auth-container");
+  },
   methods: {
     login: function() {
       this.$gAuth
@@ -37,13 +41,53 @@ export default {
 .login {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   height: 100vh;
   width: 100wh;
   background-color: #2c3343;
   color: #fff;
   font-family: "Roboto";
+
+  &__appName {
+    font-size: 2.3em;
+    font-weight: 600;
+  }
+
+  &__box {
+    display: flex;
+    width: 90vw;
+    max-width: 400px;
+    height: 320px;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 2px;
+    padding: 0.5em;
+    background-color: #1d2432;
+    align-items: center;
+    position: relative;
+    padding-top: 4em;
+
+    &__logo {
+      position: absolute;
+      top: -92px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background-color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 7px solid #2c3343;
+      color: #1d2432;
+      font-size: 5em;
+      font-weight: 600;
+    }
+
+    &__text {
+      margin-bottom: 1em;
+    }
+  }
 
   &__button {
     display: flex;
