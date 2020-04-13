@@ -2,19 +2,26 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
+import auth from '@/auth'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/login',
-    name: 'Login',
-    component: Login
+    path: '/dashboard',
+    name: 'Home',
+    component: Home,
+    meta: {
+      requireAuth: true
+    }
   },
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: '/login',
+    name: 'Login',
+    component: Login,
+    meta: {
+      guestOnly: true
+    }
   },
   {
     path: '/about',
@@ -33,8 +40,12 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-      const isAuthenticated = this.$gAuth.isAuthorized;
-  if (to.name !== 'Login' && !isAuthenticated) next({ name: 'Login' })
+  let currentUser = auth.user()
+  let requireAuth = to.matched.some(record => record.meta.requireAuth)
+  let guestOnly = to.matched.some(record => record.meta.guestOnly)
+
+  if (requireAuth && !currentUser) next('login')
+  else if (guestOnly && currentUser) next('/dashboard')
   else next()
 })
 

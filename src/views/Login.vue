@@ -1,32 +1,38 @@
 <template>
   <div class="login">
-    <div class="login__button" v-on:click="login()">Zaloguj się</div>
+    <!-- <div class="login__button" v-on:click="login()">Zaloguj się</div> -->
+    <div id="firebaseui-auth-container"></div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
+import auth from "@/auth";
 
 export default {
   name: "Login",
+  mounted() {
+      auth.authForm('#firebaseui-auth-container')
+    },
   methods: {
-      login: function() {
-          this.$gAuth
+    login: function() {
+      this.$gAuth
         .signIn()
         .then(data => {
           console.log(`Correct sign in ${data}`);
-          this.$router.push('./');
+          this.$router.push("./");
         })
         .catch(error => {
           console.error(error);
         });
-      }
+    }
   }
 };
 </script>
 
 <style lang="scss">
 @import "../assets/css/fonts.scss";
+@import "../../node_modules/firebaseui/dist/firebaseui.css";
 
 .login {
   display: flex;
