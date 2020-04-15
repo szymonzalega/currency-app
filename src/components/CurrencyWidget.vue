@@ -1,6 +1,7 @@
 <template>
   <div id="currencyWidget">
-      {{ data }}
+      <div>{{ data.name }}</div>
+      <div>{{ data.value }}</div>
   </div>
 </template>
 
