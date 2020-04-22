@@ -63,14 +63,19 @@ const actions = {
     const mockResponseFromApi = [
       {
         id: 1,
-        name: "USD",
-        value: 4.15,
+        code: "CHF",
+        table: 'A',
       },
       {
         id: 2,
-        name: "EUR",
-        value: 4.53,
+        code: "EUR",
+        table: 'A',
       },
+      {
+        id: 3,
+        code: "USD",
+        table: 'A',
+      }
     ];
     commit("FETCH_USER_CURRENCIES", mockResponseFromApi);
   },
