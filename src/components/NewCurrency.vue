@@ -1,12 +1,27 @@
 <template>
   <div id="newCurrency">
       {{ data }}
+      //{{ currencies }}
   </div>
 </template>
 
 <script>
 export default {
   name: 'NewCurrency',
+  data() {
+    return {
+      currencies: []
+    };
+  },
+  created() {
+    this.getCurrenciesFromStore();
+  },
+  methods: {
+    getCurrenciesFromStore() {
+      this.$store.dispatch("currency/fetchCurrencies");
+      this.currencies = this.$store.getters["currency/getCurrencies"];
+    }
+  },
   props: {
     data: String
   }
