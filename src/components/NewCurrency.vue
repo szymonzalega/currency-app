@@ -59,8 +59,6 @@ export default {
       this.getCurrenciesList();
     }, 
     getCurrenciesList() {
-      console.log('abc');
-      console.log(this.currencies.length)
       for(var i = 0; i < this.currencies.length; i++){
         var option = []
         for(var key in this.currencies[i]){
@@ -82,6 +80,9 @@ export default {
         this.handleSubmit()
     },
     handleSubmit() {
+        const timePerioid = this.timePerioid
+        const selected = this.selected
+        this.$store.dispatch("currency/addUserCurrency", {selected, timePerioid} );
         this.$nextTick(() => {
           this.$bvModal.hide('modal-prevent-closing')
         })

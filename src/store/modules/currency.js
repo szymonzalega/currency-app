@@ -1,11 +1,11 @@
 // import Vue from 'vue'
 
-const state = {
+const state = () => ({
   currencies: [],
   userCurrencies: [],
-};
+});
 
-const getters = {
+  const getters = {
   getCurrencies: (state) => state.currencies,
   getUserCurrencies: (state) => state.userCurrencies,
 };
@@ -14,9 +14,13 @@ const mutations = {
   FETCH_CURRENCIES(state, currencies) {
     state.currencies = currencies;
   },
+  
   FETCH_USER_CURRENCIES(state, userCurrencies) {
     state.userCurrencies = userCurrencies;
   },
+  ADD_USER_CURRENCY(state, userCurrency) {
+    state.userCurrencies.push(userCurrency)
+  }
 };
 
 const actions = {
@@ -41,7 +45,8 @@ const actions = {
     const APIUrls = [
       "https://api.nbp.pl/api/exchangerates/tables/A/?format=json",
       "https://api.nbp.pl/api/exchangerates/tables/B/?format=json",
-      "https://api.nbp.pl/api/exchangerates/tables/C/?format=json",
+      "https://api.nbp.pl/api/exchangerates/tables/C/?format=json"
+
     ];
 
     Promise.all(APIUrls.map((url) => fetch(url)))
@@ -62,23 +67,29 @@ const actions = {
 
     const mockResponseFromApi = [
       {
-        id: 1,
         code: "CHF",
         table: 'A',
       },
       {
-        id: 2,
         code: "EUR",
         table: 'A',
       },
       {
-        id: 3,
         code: "USD",
         table: 'A',
       }
     ];
     commit("FETCH_USER_CURRENCIES", mockResponseFromApi);
   },
+  addUserCurrency({commit}, payload) {
+    const mockResponseFromApi = 
+      {
+        code: payload.selected,
+        timePerioid: payload.timePerioid,
+        table: "A ",
+      }
+    commit("ADD_USER_CURRENCY", mockResponseFromApi);
+  }
 };
 
 export default {
