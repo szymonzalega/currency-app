@@ -1,60 +1,66 @@
 // import Vue from 'vue'
 
 const state = () => ({
-  currencies: [],
+  allCurrencies: [],
+  currenciesCodes: [],
   userCurrencies: [],
 });
 
   const getters = {
-  getCurrencies: (state) => state.currencies,
+  getCurrenciesCodes: (state) => state.currenciesCodes,
   getUserCurrencies: (state) => state.userCurrencies,
 };
 
 const mutations = {
-  FETCH_CURRENCIES(state, currencies) {
-    state.currencies = currencies;
+  FETCH_CURRENCIES_CODES(state) {
+    const currenciesCodes =  state.allCurrencies
+    .map((currency) => currency[0].rates)
+    .reduce((a, b) => [...a, ...b])
+    .map(({ code, currency }) => {
+      return {
+        code,
+        currency,
+      };
+    });
+
+    state.currenciesCodes = currenciesCodes;
   },
-  
+  FETCH_CURRENCIES(state, currencies) {
+    state.allCurrencies = currencies;
+  },
   FETCH_USER_CURRENCIES(state, userCurrencies) {
     state.userCurrencies = userCurrencies;
   },
   ADD_USER_CURRENCY(state, userCurrency) {
+    for(var i = 0; i< state.allCurrencies.length; i++){
+      const rates = state.allCurrencies[i][0].rates;
+      if(rates.find(x => x.code === userCurrency.code)){
+        userCurrency.table = state.allCurrencies[i][0].table
+      }
+    }
+
+    console.log(userCurrency)
     state.userCurrencies.push(userCurrency)
   }
 };
 
 const actions = {
+  fetchCurrenciesCodes({ commit }) {
+    commit("FETCH_CURRENCIES_CODES");
+  },
   fetchCurrencies({ commit }) {
-    console.log(commit);
-
-    //tu jest laczenie trzech tablic, A, B, C bo tak zwraca NBP w API
-    //oraz zmapowanie odpowiedzi na jedynie nazwe waluty i jej kod
-    //mozliwe ze takie cos bedzie trzeba robic nie tu a w komponencie
-    const getAllCurrenciesCode = (currencies) => {
-      return currencies
-        .map((currency) => currency[0].rates)
-        .reduce((a, b) => [...a, ...b])
-        .map(({ code, currency }) => {
-          return {
-            code,
-            currency,
-          };
-        });
-    };
-
     const APIUrls = [
       "https://api.nbp.pl/api/exchangerates/tables/A/?format=json",
       "https://api.nbp.pl/api/exchangerates/tables/B/?format=json",
-      "https://api.nbp.pl/api/exchangerates/tables/C/?format=json"
 
     ];
 
     Promise.all(APIUrls.map((url) => fetch(url)))
       .then((responses) => Promise.all(responses.map((r) => r.json())))
       .then((currencies) => {
-        commit("FETCH_CURRENCIES", getAllCurrenciesCode(currencies));
+        commit("FETCH_CURRENCIES",currencies);
       });
-  },
+  },  
   fetchUserCurrencies({ commit }, payload) {
     //tutaj trzeba zrobic fetcha do API po waluty uzytkownika
     //w payload trzeba wyslac jakies id usera
@@ -86,7 +92,6 @@ const actions = {
       {
         code: payload.selected,
         timePerioid: payload.timePerioid,
-        table: "A ",
       }
     commit("ADD_USER_CURRENCY", mockResponseFromApi);
   }

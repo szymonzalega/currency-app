@@ -55,7 +55,8 @@ export default {
   },
   methods: {
     getCurrenciesFromStore() {
-      this.currencies = this.$store.getters["currency/getCurrencies"];
+      this.$store.dispatch("currency/fetchCurrenciesCodes");
+      this.currencies = this.$store.getters["currency/getCurrenciesCodes"];
       this.getCurrenciesList();
     }, 
     getCurrenciesList() {
