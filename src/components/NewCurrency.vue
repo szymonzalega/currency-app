@@ -1,7 +1,8 @@
 <template>
   <div>
-    <b-button v-b-modal.modal-prevent-closing> Dodaj walutę </b-button>
-
+    <b-button-group>
+      <b-button class = "addCurrency" v-b-modal.modal-prevent-closing > Dodaj walutę </b-button>
+    </b-button-group>
     <b-modal
       id="modal-prevent-closing"
       ref="modal"
@@ -58,6 +59,7 @@ export default {
       this.$store.dispatch("currency/fetchCurrenciesCodes");
       this.currencies = this.$store.getters["currency/getCurrenciesCodes"];
       this.getCurrenciesList();
+      console.log
     }, 
     getCurrenciesList() {
       for(var i = 0; i < this.currencies.length; i++){
@@ -94,3 +96,11 @@ export default {
   }
 }
 </script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+.addCurrency {
+  margin: 2rem;
+  display: flex;
+}
+</style>
