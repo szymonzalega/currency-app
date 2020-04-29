@@ -21,7 +21,9 @@
           <div class="exchangeRate--value">{{currency.rates[0].mid}}&nbsp;PLN</div>
         </div>
         <!-- dane -->
-        <span style="font-size: 7px;">{{currency}}</span>
+        <currency-price
+          v-bind:currencyData="currency">
+        </currency-price>
       </div>
     </div>
   </div>
@@ -29,7 +31,7 @@
 
 <script>
 import WidgetSettings from "./WidgetSettings.vue";
-
+import CurrencyPrice from "./CurrencyPrice.vue";
 export default {
   name: "CurrencyWidget",
   data: function() {
@@ -39,7 +41,7 @@ export default {
       widgetOption: "LAST_DAYS",
       widgetSettingsModel: {
         type: "LAST_DAYS",
-        last: 10
+        last: 20
       }
     };
   },
@@ -47,7 +49,8 @@ export default {
     data: {}
   },
   components: {
-    WidgetSettings
+    WidgetSettings,
+    CurrencyPrice
   },
   computed: {
     joinTitle() {

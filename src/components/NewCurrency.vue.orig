@@ -1,0 +1,75 @@
+<template>
+  <div id="newCurrency">
+      {{ data }}
+      //{{ currencies }}
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'NewCurrency',
+  data() {
+    return {
+      currencies: []
+    };
+  },
+  created() {
+    this.getCurrenciesFromStore();
+  },
+  methods: {
+    getCurrenciesFromStore() {
+<<<<<<< HEAD
+      this.$store.dispatch("currency/fetchCurrencies");
+      this.currencies = this.$store.getters["currency/getCurrencies"];
+=======
+      this.$store.dispatch("currency/fetchCurrenciesCodes");
+      this.currencies = this.$store.getters["currency/getCurrenciesCodes"];
+      this.getCurrenciesList();
+    }, 
+    getCurrenciesList() {
+      for(var i = 0; i < this.currencies.length; i++){
+        var option = []
+        for(var key in this.currencies[i]){
+          if(key == "code"){
+            option["value"] = this.currencies[i][key]
+          }else if(key == "currency"){
+            option["text"] = this.currencies[i][key]
+          }
+        }
+      this. options.push(Object.assign({},option))
+      }
+    },
+    resetModal() {
+        this.selected = ''
+        this.timePerioid = null
+    },
+    handleOk(bvModalEvt) {
+        bvModalEvt.preventDefault()
+        this.handleSubmit()
+    },
+    handleSubmit() {
+        const timePerioid = this.timePerioid
+        const selected = this.selected
+        this.$store.dispatch("currency/addUserCurrency", {selected, timePerioid} );
+        this.$nextTick(() => {
+          this.$bvModal.hide('modal-prevent-closing')
+        })
+>>>>>>> fb62dd3... Podstawowe rysowanie wykresu
+    }
+  },
+  props: {
+    data: String
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+    #newCurrency {
+        height: 50px;
+        width: 50vw;
+        margin: 1em;
+        background-color: #33394c;
+    }
+
+</style>
