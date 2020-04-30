@@ -66,7 +66,8 @@ export default {
         const timePerioid = this.timePerioid;
         const selected = this.selected;
         const user =  this.$store.getters["user/user"].uid;
-        this.$store.dispatch("currency/addUserCurrency", {selected, timePerioid, user} );
+        const selectionType ="LAST_DAYS";
+        this.$store.dispatch("currency/addUserCurrency", {selected, timePerioid, user, selectionType} );
         this.$nextTick(() => {
           this.$bvModal.hide('modal-prevent-closing');
         });

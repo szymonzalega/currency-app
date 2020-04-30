@@ -53,7 +53,8 @@ const actions = {
       {
         code: payload.selected,
         timePerioid: payload.timePerioid,
-        uid: payload.user
+        uid: payload.user,
+        type: payload.selectionType
       }
 
     commit("ADD_USER_CURRENCY", mockResponseFromApi);
