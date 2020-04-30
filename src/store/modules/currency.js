@@ -1,4 +1,5 @@
 // import Vue from 'vue'
+import auth from '@/auth'
 
 const state = () => ({
   currencies: [],
@@ -30,6 +31,7 @@ const mutations = {
     }
 
     console.log(userCurrency)
+    auth.addUserCurrency(userCurrency)
     state.userCurrencies.push(userCurrency)
   }
 };
@@ -41,38 +43,19 @@ const actions = {
   storeCurrencies({ commit }, payload) {
     commit("STORE_CURRENCIES", payload);
   },
-    fetchUserCurrencies({ commit }, payload) {
-    //tutaj trzeba zrobic fetcha do API po waluty uzytkownika
-    //w payload trzeba wyslac jakies id usera
-    //i w rozwiazanej promisie trzeba zrobic commit z responsem
-    //tak jak zrobione to jest w fetchCurrencies, czyli wyzej
-    //aktualnie jako dane wsadzam mocka
-
-    //musialem uzyc payload bo linter sie czepial :(
-    console.log(payload);
-
-    const mockResponseFromApi = [
-      {
-        code: "CHF",
-        table: 'A',
-      },
-      {
-        code: "EUR",
-        table: 'A',
-      },
-      {
-        code: "USD",
-        table: 'A',
-      }
-    ];
-    commit("FETCH_USER_CURRENCIES", mockResponseFromApi);
+  fetchUserCurrencies({ commit }, payload) {
+    const response = auth.getUserCurrencies(payload);
+  
+    commit("FETCH_USER_CURRENCIES", response);
   },
   addUserCurrency({commit}, payload) {
     const mockResponseFromApi = 
       {
         code: payload.selected,
         timePerioid: payload.timePerioid,
+        uid: payload.user
       }
+
     commit("ADD_USER_CURRENCY", mockResponseFromApi);
   }
 };

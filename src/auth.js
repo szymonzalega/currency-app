@@ -47,7 +47,35 @@ const auth = {
   },
   logout() {
     firebase.auth().signOut();
-  }
+  },
+  addUserCurrency(userCurrency) {
+    console.log('received currency')
+    console.log(userCurrency)
+    firebase.firestore().collection("Currencies").add(userCurrency)
+    .then(function(docRef) {
+        console.log("Document written with ID: ", docRef.id);
+    })
+    .catch(function(error) {
+        console.error("Error adding document: ", error);
+    });
+  },
+  getUserCurrencies(userId) {
+    const currencies = [];
+    firebase.firestore().collection("Currencies")
+    .where("uid", "==", userId)
+    .get()
+    .then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+          console.log(doc.id, " => ", doc.data());
+          currencies.push(doc.data());
+      });
+    })
+    .catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
+    
+    return currencies;
+  } 
 }
 
 export default auth;

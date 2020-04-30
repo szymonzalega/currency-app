@@ -55,20 +55,21 @@ export default {
   },
   methods: {
     resetModal() {
-        this.selected = ''
-        this.timePerioid = null
+        this.selected = '';
+        this.timePerioid = null;
     },
     handleOk(bvModalEvt) {
-        bvModalEvt.preventDefault()
-        this.handleSubmit()
+        bvModalEvt.preventDefault();
+        this.handleSubmit();
     },
     handleSubmit() {
-        const timePerioid = this.timePerioid
-        const selected = this.selected
-        this.$store.dispatch("currency/addUserCurrency", {selected, timePerioid} );
+        const timePerioid = this.timePerioid;
+        const selected = this.selected;
+        const user =  this.$store.getters["user/user"].uid;
+        this.$store.dispatch("currency/addUserCurrency", {selected, timePerioid, user} );
         this.$nextTick(() => {
-          this.$bvModal.hide('modal-prevent-closing')
-        })
+          this.$bvModal.hide('modal-prevent-closing');
+        });
     }
   },
 }

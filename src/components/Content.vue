@@ -38,7 +38,9 @@ export default {
       this.currencies = this.$store.getters["currency/getCurrenciesCodes"];
     },
     getUserCurrenciesFromStore() {
-      const userId = "userId";
+      //trzeba rozkminic firebase i zobaczyc ktore to jest userId i je tu pobrac ze stora
+      const user = this.$store.getters["user/user"];
+      const userId = user.uid;
 
       this.$store.dispatch("currency/fetchUserCurrencies", userId);
       this.userCurrencies = this.$store.getters["currency/getUserCurrencies"];
