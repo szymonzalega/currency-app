@@ -1,6 +1,8 @@
 <template>
   <div class="content">
-    <new-currency data="NEW CURRENCY COMPONENT" />
+    <new-currency 
+      v-bind:data="options" 
+    />
     <div class="content__widgetRow">
       <currency-widget
         v-for="currency of userCurrencies"
@@ -19,12 +21,15 @@ export default {
   name: "Content",
   data() {
     return {
-      userCurrencies: []
+      userCurrencies: [], 
+      currencies: {},
+      options: []
     };
   },
   created() {
     this.getCurrenciesFromStore();
     this.getUserCurrenciesFromStore();
+    this.getCurrenciesCodes();
   },
   components: {
     NewCurrency,
@@ -34,13 +39,34 @@ export default {
     getCurrenciesFromStore() {
       this.$store.dispatch("currency/fetchCurrencies");
     },
+    getCurrenciesCodes() {
+      this.$store.dispatch("currency/fetchCurrenciesCodes");
+      this.currencies = this.$store.getters["currency/getCurrenciesCodes"];
+      this.getCurrenciesList();
+    },
     getUserCurrenciesFromStore() {
       //trzeba rozkminic firebase i zobaczyc ktore to jest userId i je tu pobrac ze stora
       const userId = "userId";
 
       this.$store.dispatch("currency/fetchUserCurrencies", userId);
       this.userCurrencies = this.$store.getters["currency/getUserCurrencies"];
-    }
+      console.log('user currencies', this.userCurrencies)
+    },
+    getCurrenciesList() {
+      console.log('getting currencies');
+      console.log
+      for(var i = 0; i < this.currencies.length; i++){
+        var option = []
+        for(var key in this.currencies[i]){
+          if(key == "code"){
+            option["value"] = this.currencies[i][key]
+          }else if(key == "currency"){
+            option["text"] = this.currencies[i][key]
+          }
+        }
+      this. options.push(Object.assign({},option))
+      }
+    },
   },
   props: {
     data: String

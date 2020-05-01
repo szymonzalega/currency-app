@@ -45,35 +45,18 @@ export default {
   name: 'NewCurrency',
   data() {
     return {
-      currencies: {},
       options: [],
       selected: '',
       timePerioid: null
     };
   },
+  props: {
+    data: {}
+  },
   created() {
-    this.getCurrenciesFromStore();
+    this.options = this.data;
   },
   methods: {
-    getCurrenciesFromStore() {
-      this.$store.dispatch("currency/fetchCurrenciesCodes");
-      this.currencies = this.$store.getters["currency/getCurrenciesCodes"];
-      this.getCurrenciesList();
-      console.log
-    }, 
-    getCurrenciesList() {
-      for(var i = 0; i < this.currencies.length; i++){
-        var option = []
-        for(var key in this.currencies[i]){
-          if(key == "code"){
-            option["value"] = this.currencies[i][key]
-          }else if(key == "currency"){
-            option["text"] = this.currencies[i][key]
-          }
-        }
-      this. options.push(Object.assign({},option))
-      }
-    },
     resetModal() {
         this.selected = ''
         this.timePerioid = null
@@ -91,9 +74,6 @@ export default {
         })
     }
   },
-  props: {
-    data: String
-  }
 }
 </script>
 
