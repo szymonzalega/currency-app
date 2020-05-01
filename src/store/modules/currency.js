@@ -30,9 +30,15 @@ const mutations = {
       }
     }
 
-    console.log(userCurrency)
     auth.addUserCurrency(userCurrency)
     state.userCurrencies.push(userCurrency)
+  },
+  UPDATE_USER_CURRENCY_SETTINGS(state, userCurrency){
+    console.log(state);
+    console.log(userCurrency);
+    
+    var currencyToUpdate = state.userCurrencies.find(x => x.code == userCurrency.code);
+    currencyToUpdate.options = userCurrency.options;
   }
 };
 
@@ -49,15 +55,30 @@ const actions = {
     commit("FETCH_USER_CURRENCIES", response);
   },
   addUserCurrency({commit}, payload) {
-    const mockResponseFromApi = 
+    const userCurrency = 
       {
         code: payload.selected,
-        timePerioid: payload.timePerioid,
+        options: {
+          last: payload.timePerioid,
+          type: payload.selectionType
+        },
         uid: payload.user,
-        type: payload.selectionType
       }
 
-    commit("ADD_USER_CURRENCY", mockResponseFromApi);
+    commit("ADD_USER_CURRENCY", userCurrency);
+  },
+  updateUserCurrencySetting({commit}, payload) {
+    console.log('from update', payload)
+    const userCurrency = 
+    {
+      code: payload.code,
+      options: payload.options,
+      uid: payload.user,
+      table: payload.table
+    }
+    console.log('user currency', userCurrency)
+    auth.updateUserCurrency(payload.id, userCurrency);
+    commit("UPDATE_USER_CURRENCY_SETTINGS", payload)
   }
 };
 

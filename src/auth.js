@@ -60,14 +60,19 @@ const auth = {
     });
   },
   getUserCurrencies(userId) {
+    console.log('abc')
+    console.log(userId)
     const currencies = [];
     firebase.firestore().collection("Currencies")
     .where("uid", "==", userId)
     .get()
     .then(function(querySnapshot) {
       querySnapshot.forEach(function(doc) {
-          console.log(doc.id, " => ", doc.data());
-          currencies.push(doc.data());
+          let document = {};
+          document = doc.data();
+          document.id = doc.id;
+          console.log('Received document', document)
+          currencies.push(document);
       });
     })
     .catch(function(error) {
@@ -75,7 +80,17 @@ const auth = {
     });
     
     return currencies;
-  } 
+  },
+  updateUserCurrency(documentId, currency){
+    console.log('received currency', currency)
+    firebase.firestore().collection('Currencies').doc(documentId).set(currency)
+    .then(function() {
+      console.log("Document successfully written!");
+    })
+    .catch(function(error) {
+      console.error("Error writing document: ", error);
+    });
+  }
 }
 
 export default auth;
