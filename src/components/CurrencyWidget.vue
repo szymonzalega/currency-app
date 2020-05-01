@@ -11,6 +11,9 @@
     <div v-if="!isSettingsMode">
       <div v-if="areDataLoaded">
         <div class="currencyWidget__titleRow">
+          <div class="optionIcon">
+            <b-icon v-on:click="removeWidget()" icon="trash-fill" font-scale="1.3"></b-icon>
+          </div>
           <div class="title">{{joinTitle}}</div>
           <div class="optionIcon">
             <b-icon v-on:click="openSettings()" icon="gear" font-scale="1.3"></b-icon>
@@ -101,8 +104,11 @@ export default {
 
        console.log(user, table, code, options)
        this.$store.dispatch("currency/updateUserCurrencySetting", {user, table, code, options, id});
+    },
+    removeWidget() {
+      const id = this.data.id;
+      this.$store.dispatch("currency/deleteCurrencyWidget", {id});
     }
-
   }
 };
 </script>

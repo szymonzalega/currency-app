@@ -49,14 +49,12 @@ const auth = {
     firebase.auth().signOut();
   },
   addUserCurrency(userCurrency) {
-    console.log('received currency')
-    console.log(userCurrency)
-    firebase.firestore().collection("Currencies").add(userCurrency)
-    .then(function(docRef) {
-        console.log("Document written with ID: ", docRef.id);
+    firebase.firestore().collection("Currencies").doc(userCurrency.id).set(userCurrency)
+    .then(function() {
+      console.log("Document successfully written!");
     })
     .catch(function(error) {
-        console.error("Error adding document: ", error);
+      console.error("Error writing document: ", error);
     });
   },
   getUserCurrencies(userId) {
@@ -81,7 +79,7 @@ const auth = {
     
     return currencies;
   },
-  updateUserCurrency(documentId, currency){
+  updateUserCurrency(documentId, currency) {
     console.log('received currency', currency)
     firebase.firestore().collection('Currencies').doc(documentId).set(currency)
     .then(function() {
@@ -90,6 +88,14 @@ const auth = {
     .catch(function(error) {
       console.error("Error writing document: ", error);
     });
+  },
+  deleteUserCurrency(documentId) {
+    firebase.firestore().collection('Currencies').doc(documentId).delete().then(function() {
+      console.log("Document successfully deleted!");
+  }).catch(function(error) {
+      console.error("Error removing document: ", error);
+  });
+  
   }
 }
 

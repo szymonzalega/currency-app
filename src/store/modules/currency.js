@@ -1,5 +1,6 @@
 // import Vue from 'vue'
 import auth from '@/auth'
+import { v4 as uuid } from 'uuid';
 
 const state = () => ({
   currencies: [],
@@ -13,8 +14,13 @@ const state = () => ({
 };
 
 const mutations = {
+<<<<<<< HEAD
   STORE_CURRENCIES_CODES(state, currencies) {
         state.currenciesCodes = currencies;
+=======
+  FETCH_CURRENCIES_CODES(state, currenciesCodes) {
+    state.currenciesCodes = currenciesCodes;
+>>>>>>> usuwanie widgetu
   },
   STORE_CURRENCIES(state, currencies) {
     state.currencies = currencies;
@@ -23,22 +29,18 @@ const mutations = {
     state.userCurrencies = userCurrencies;
   },
   ADD_USER_CURRENCY(state, userCurrency) {
-    for(var i = 0; i< state.currencies.length; i++){
-      const rates = state.currencies[i][0].rates;
-      if(rates.find(x => x.code === userCurrency.code)){
-        userCurrency.table = state.currencies[i][0].table
-      }
-    }
-
-    auth.addUserCurrency(userCurrency)
     state.userCurrencies.push(userCurrency)
   },
   UPDATE_USER_CURRENCY_SETTINGS(state, userCurrency){
-    console.log(state);
-    console.log(userCurrency);
-    
     var currencyToUpdate = state.userCurrencies.find(x => x.code == userCurrency.code);
     currencyToUpdate.options = userCurrency.options;
+  },
+  DELETE_CURRENCY_WIDGET(state, id) {
+    var userCurrencies = [...state.userCurrencies];
+    const curr = userCurrencies.filter(function(item) {
+      return item.id !== id
+  })
+    state.userCurrencies = curr;
   }
 };
 
@@ -54,7 +56,7 @@ const actions = {
   
     commit("FETCH_USER_CURRENCIES", response);
   },
-  addUserCurrency({commit}, payload) {
+  addUserCurrency({commit, state}, payload) {
     const userCurrency = 
       {
         code: payload.selected,
@@ -64,7 +66,15 @@ const actions = {
         },
         uid: payload.user,
       }
-
+      for(var i = 0; i< state.allCurrencies.length; i++){
+        const rates = state.allCurrencies[i][0].rates;
+        if(rates.find(x => x.code === userCurrency.code)){
+          userCurrency.table = state.allCurrencies[i][0].table
+        }
+      }
+      userCurrency.id = uuid();
+      console.log(userCurrency.id);
+      auth.addUserCurrency(userCurrency);
     commit("ADD_USER_CURRENCY", userCurrency);
   },
   updateUserCurrencySetting({commit}, payload) {
@@ -79,6 +89,10 @@ const actions = {
     console.log('user currency', userCurrency)
     auth.updateUserCurrency(payload.id, userCurrency);
     commit("UPDATE_USER_CURRENCY_SETTINGS", payload)
+  },
+  deleteCurrencyWidget({commit}, payload) {
+    auth.deleteUserCurrency(payload.id);
+    commit("DELETE_CURRENCY_WIDGET", payload.id)
   }
 };
 
