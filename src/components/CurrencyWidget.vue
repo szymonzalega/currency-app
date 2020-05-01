@@ -9,7 +9,7 @@
       ></widget-settings>
     </div>
     <div v-if="!isSettingsMode">
-      <div v-if="currency">
+      <div v-if="areDataLoaded">
         <div class="currencyWidget__titleRow">
           <div class="title">{{joinTitle}}</div>
           <div class="optionIcon">
@@ -42,7 +42,8 @@ export default {
       widgetSettingsModel: {
         type: "LAST_DAYS",
         last: 20
-      }
+      },
+      areDataLoaded: false
     };
   },
   props: {
@@ -54,8 +55,11 @@ export default {
   },
   computed: {
     joinTitle() {
-      let { currency, code } = this.currency;
-      return `${code} (${currency[0].toUpperCase()}${currency.slice(1)})`;
+      if(this.areDataLoaded) {
+        let { currency, code } = this.currency;
+        return `${code} (${currency[0].toUpperCase()}${currency.slice(1)})`;
+      }
+      return null
     }
   },
   created() {
@@ -86,7 +90,10 @@ export default {
 
       fetch(getUrl(options))
         .then(r => r.json())
-        .then(response => (this.currency = response));
+        .then(response => {
+          this.currency = response;
+          this.areDataLoaded = true
+          });
     }
   }
 };
