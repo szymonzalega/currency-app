@@ -18,7 +18,7 @@
         >
         <b-form-select 
           v-model="selected" 
-          :options="options" 
+          :options="data" 
           class="mb-3"> </b-form-select>
         </b-form-group>       
       
@@ -52,9 +52,6 @@ export default {
   },
   props: {
     data: {}
-  },
-  created() {
-    this.options = this.data;
   },
   methods: {
     resetModal() {

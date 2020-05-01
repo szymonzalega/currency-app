@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <new-currency 
-      v-bind:data="options" 
+      v-bind:data="currencies" 
     />
     <div class="content__widgetRow">
       <currency-widget
@@ -22,51 +22,70 @@ export default {
   data() {
     return {
       userCurrencies: [], 
-      currencies: {},
-      options: []
+      currencies: [],
     };
   },
   created() {
-    this.getCurrenciesFromStore();
     this.getUserCurrenciesFromStore();
-    this.getCurrenciesCodes();
+    this.fetchCurrencies();
   },
   components: {
     NewCurrency,
     CurrencyWidget
   },
   methods: {
-    getCurrenciesFromStore() {
-      this.$store.dispatch("currency/fetchCurrencies");
-    },
     getCurrenciesCodes() {
-      this.$store.dispatch("currency/fetchCurrenciesCodes");
       this.currencies = this.$store.getters["currency/getCurrenciesCodes"];
-      this.getCurrenciesList();
     },
     getUserCurrenciesFromStore() {
-      //trzeba rozkminic firebase i zobaczyc ktore to jest userId i je tu pobrac ze stora
       const userId = "userId";
 
       this.$store.dispatch("currency/fetchUserCurrencies", userId);
       this.userCurrencies = this.$store.getters["currency/getUserCurrencies"];
-      console.log('user currencies', this.userCurrencies)
     },
-    getCurrenciesList() {
-      console.log('getting currencies');
-      console.log
-      for(var i = 0; i < this.currencies.length; i++){
+    fetchCurrencies() {
+    const getAllCurrenciesCode = (currencies) => {
+      return currencies
+        .map((currency) => currency[0].rates)
+        .reduce((a, b) => [...a, ...b])
+        .map(({ code, currency }) => {
+          return {
+            code,
+            currency,
+          };
+        });
+    };
+    const getCurrenciesList = (currencies) => {
+      let options = []
+      for(var i = 0; i < currencies.length; i++){
         var option = []
-        for(var key in this.currencies[i]){
+        for(var key in currencies[i]){
           if(key == "code"){
-            option["value"] = this.currencies[i][key]
+            option["value"] = currencies[i][key]
           }else if(key == "currency"){
-            option["text"] = this.currencies[i][key]
+            option["text"] = currencies[i][key]
           }
         }
-      this. options.push(Object.assign({},option))
+        options.push(Object.assign({},option))
       }
-    },
+      return options;
+    };
+
+    const APIUrls = [
+      "https://api.nbp.pl/api/exchangerates/tables/A/?format=json",
+      "https://api.nbp.pl/api/exchangerates/tables/B/?format=json"
+    ];
+ 
+    Promise.all(APIUrls.map((url) => fetch(url)))
+      .then((responses) => Promise.all(responses.map((r) => r.json())))
+      .then((currencies) => {
+        const currenciesCodes = getAllCurrenciesCode(currencies);
+        this.$store.dispatch("currency/storeCurrencies", currencies );
+        this.currencies = getCurrenciesList(currenciesCodes);
+        this.$store.dispatch("currency/storeCurrenciesCodes", currenciesCodes );
+
+      });
+  },
   },
   props: {
     data: String

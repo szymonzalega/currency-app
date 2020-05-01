@@ -1,41 +1,31 @@
 // import Vue from 'vue'
 
 const state = () => ({
-  allCurrencies: [],
+  currencies: [],
   currenciesCodes: [],
   userCurrencies: [],
 });
 
   const getters = {
-  getCurrenciesCodes: (state) => state.currenciesCodes,
+  getCurrenciesCodes: (state) => state.currencies,
   getUserCurrencies: (state) => state.userCurrencies,
 };
 
 const mutations = {
-  FETCH_CURRENCIES_CODES(state) {
-    const currenciesCodes =  state.allCurrencies
-    .map((currency) => currency[0].rates)
-    .reduce((a, b) => [...a, ...b])
-    .map(({ code, currency }) => {
-      return {
-        code,
-        currency,
-      };
-    });
-
-    state.currenciesCodes = currenciesCodes;
+  STORE_CURRENCIES_CODES(state, currencies) {
+        state.currenciesCodes = currencies;
   },
-  FETCH_CURRENCIES(state, currencies) {
-    state.allCurrencies = currencies;
+  STORE_CURRENCIES(state, currencies) {
+    state.currencies = currencies;
   },
   FETCH_USER_CURRENCIES(state, userCurrencies) {
     state.userCurrencies = userCurrencies;
   },
   ADD_USER_CURRENCY(state, userCurrency) {
-    for(var i = 0; i< state.allCurrencies.length; i++){
-      const rates = state.allCurrencies[i][0].rates;
+    for(var i = 0; i< state.currencies.length; i++){
+      const rates = state.currencies[i][0].rates;
       if(rates.find(x => x.code === userCurrency.code)){
-        userCurrency.table = state.allCurrencies[i][0].table
+        userCurrency.table = state.currencies[i][0].table
       }
     }
 
@@ -45,23 +35,13 @@ const mutations = {
 };
 
 const actions = {
-  fetchCurrenciesCodes({ commit }) {
-    commit("FETCH_CURRENCIES_CODES");
+  storeCurrenciesCodes({ commit }, payload) {
+    commit("STORE_CURRENCIES_CODES", payload);
   },
-  fetchCurrencies({ commit }) {
-    const APIUrls = [
-      "https://api.nbp.pl/api/exchangerates/tables/A/?format=json",
-      "https://api.nbp.pl/api/exchangerates/tables/B/?format=json",
-
-    ];
-
-    Promise.all(APIUrls.map((url) => fetch(url)))
-      .then((responses) => Promise.all(responses.map((r) => r.json())))
-      .then((currencies) => {
-        commit("FETCH_CURRENCIES",currencies);
-      });
-  },  
-  fetchUserCurrencies({ commit }, payload) {
+  storeCurrencies({ commit }, payload) {
+    commit("STORE_CURRENCIES", payload);
+  },
+    fetchUserCurrencies({ commit }, payload) {
     //tutaj trzeba zrobic fetcha do API po waluty uzytkownika
     //w payload trzeba wyslac jakies id usera
     //i w rozwiazanej promisie trzeba zrobic commit z responsem
