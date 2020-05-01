@@ -30,7 +30,6 @@ const auth = {
 
     firebase.auth().onAuthStateChanged((user) => {
       this.context.$store.dispatch('user/setCurrentUser');
-      this.context.$store.dispatch("currency/fetchCurrencies");
 
       let requireAuth = this.context.$route.matched.some(record => record.meta.requireAuth)
       let guestOnly = this.context.$route.matched.some(record => record.meta.guestOnly)

@@ -14,13 +14,8 @@ const state = () => ({
 };
 
 const mutations = {
-<<<<<<< HEAD
   STORE_CURRENCIES_CODES(state, currencies) {
         state.currenciesCodes = currencies;
-=======
-  FETCH_CURRENCIES_CODES(state, currenciesCodes) {
-    state.currenciesCodes = currenciesCodes;
->>>>>>> usuwanie widgetu
   },
   STORE_CURRENCIES(state, currencies) {
     state.currencies = currencies;
@@ -66,10 +61,10 @@ const actions = {
         },
         uid: payload.user,
       }
-      for(var i = 0; i< state.allCurrencies.length; i++){
-        const rates = state.allCurrencies[i][0].rates;
+      for(var i = 0; i< state.currencies.length; i++){
+        const rates = state.currencies[i][0].rates;
         if(rates.find(x => x.code === userCurrency.code)){
-          userCurrency.table = state.allCurrencies[i][0].table
+          userCurrency.table = state.currencies[i][0].table
         }
       }
       userCurrency.id = uuid();
