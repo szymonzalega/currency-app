@@ -73,12 +73,10 @@ const actions = {
         }
       }
       userCurrency.id = uuid();
-      console.log(userCurrency.id);
       auth.addUserCurrency(userCurrency);
     commit("ADD_USER_CURRENCY", userCurrency);
   },
   updateUserCurrencySetting({commit}, payload) {
-    console.log('from update', payload)
     const userCurrency = 
     {
       code: payload.code,
@@ -86,7 +84,6 @@ const actions = {
       uid: payload.user,
       table: payload.table
     }
-    console.log('user currency', userCurrency)
     auth.updateUserCurrency(payload.id, userCurrency);
     commit("UPDATE_USER_CURRENCY_SETTINGS", payload)
   },

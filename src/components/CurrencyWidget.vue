@@ -102,12 +102,11 @@ export default {
 
        let {table, code, id} = this.data;
 
-       console.log(user, table, code, options)
        this.$store.dispatch("currency/updateUserCurrencySetting", {user, table, code, options, id});
     },
     removeWidget() {
-      const id = this.data.id;
-      this.$store.dispatch("currency/deleteCurrencyWidget", {id});
+      console.log('id', this.data.id);
+      this.$emit("removeWidget", this.data.id);
     }
   }
 };

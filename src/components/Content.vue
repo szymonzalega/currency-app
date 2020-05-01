@@ -8,6 +8,7 @@
         v-for="currency of userCurrencies"
         v-bind:key="currency.id"
         v-bind:data="currency"
+        v-on:removeWidget="removeWidget($event)"
       />
     </div>
   </div>
@@ -38,7 +39,6 @@ export default {
       this.currencies = this.$store.getters["currency/getCurrenciesCodes"];
     },
     getUserCurrenciesFromStore() {
-      //trzeba rozkminic firebase i zobaczyc ktore to jest userId i je tu pobrac ze stora
       const user = this.$store.getters["user/user"];
       const userId = user.uid;
 
@@ -88,6 +88,11 @@ export default {
 
       });
   },
+    removeWidget(data) {
+      const id = data;
+      this.$store.dispatch("currency/deleteCurrencyWidget", {id});
+      this.userCurrencies = this.$store.getters["currency/getUserCurrencies"];
+    }
   },
   props: {
     data: String
