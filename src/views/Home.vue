@@ -25,8 +25,8 @@ export default {
   #home {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    width: 100wh;
+    min-height: 100vh;
+    min-width: 100wh;
     background-color: #2c3343;
     color: #fff;
     font-family: 'Roboto';

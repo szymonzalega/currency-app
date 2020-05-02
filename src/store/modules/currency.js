@@ -1,84 +1,91 @@
 // import Vue from 'vue'
+import auth from '@/auth'
+import { v4 as uuid } from 'uuid';
 
-const state = {
+const state = () => ({
   currencies: [],
+  currenciesCodes: [],
   userCurrencies: [],
-};
+});
 
-const getters = {
-  getCurrencies: (state) => state.currencies,
+  const getters = {
+  getCurrenciesCodes: (state) => state.currencies,
   getUserCurrencies: (state) => state.userCurrencies,
 };
 
 const mutations = {
-  FETCH_CURRENCIES(state, currencies) {
+  STORE_CURRENCIES_CODES(state, currencies) {
+        state.currenciesCodes = currencies;
+  },
+  STORE_CURRENCIES(state, currencies) {
     state.currencies = currencies;
   },
   FETCH_USER_CURRENCIES(state, userCurrencies) {
     state.userCurrencies = userCurrencies;
   },
+  ADD_USER_CURRENCY(state, userCurrency) {
+    state.userCurrencies.push(userCurrency)
+  },
+  UPDATE_USER_CURRENCY_SETTINGS(state, userCurrency){
+    var currencyToUpdate = state.userCurrencies.find(x => x.code == userCurrency.code);
+    currencyToUpdate.options = userCurrency.options;
+  },
+  DELETE_CURRENCY_WIDGET(state, id) {
+    var userCurrencies = [...state.userCurrencies];
+    const curr = userCurrencies.filter(function(item) {
+      return item.id !== id
+  })
+    state.userCurrencies = curr;
+  }
 };
 
 const actions = {
-  fetchCurrencies({ commit }) {
-    console.log(commit);
-
-    //tu jest laczenie trzech tablic, A, B, C bo tak zwraca NBP w API
-    //oraz zmapowanie odpowiedzi na jedynie nazwe waluty i jej kod
-    //mozliwe ze takie cos bedzie trzeba robic nie tu a w komponencie
-    const getAllCurrenciesCode = (currencies) => {
-      return currencies
-        .map((currency) => currency[0].rates)
-        .reduce((a, b) => [...a, ...b])
-        .map(({ code, currency }) => {
-          return {
-            code,
-            currency,
-          };
-        });
-    };
-
-    const APIUrls = [
-      "https://api.nbp.pl/api/exchangerates/tables/A/?format=json",
-      "https://api.nbp.pl/api/exchangerates/tables/B/?format=json",
-      "https://api.nbp.pl/api/exchangerates/tables/C/?format=json",
-    ];
-
-    Promise.all(APIUrls.map((url) => fetch(url)))
-      .then((responses) => Promise.all(responses.map((r) => r.json())))
-      .then((currencies) => {
-        commit("FETCH_CURRENCIES", getAllCurrenciesCode(currencies));
-      });
+  storeCurrenciesCodes({ commit }, payload) {
+    commit("STORE_CURRENCIES_CODES", payload);
+  },
+  storeCurrencies({ commit }, payload) {
+    commit("STORE_CURRENCIES", payload);
   },
   fetchUserCurrencies({ commit }, payload) {
-    //tutaj trzeba zrobic fetcha do API po waluty uzytkownika
-    //w payload trzeba wyslac jakies id usera
-    //i w rozwiazanej promisie trzeba zrobic commit z responsem
-    //tak jak zrobione to jest w fetchCurrencies, czyli wyzej
-    //aktualnie jako dane wsadzam mocka
-
-    //musialem uzyc payload bo linter sie czepial :(
-    console.log(payload);
-
-    const mockResponseFromApi = [
-      {
-        id: 1,
-        code: "CHF",
-        table: 'A',
-      },
-      {
-        id: 2,
-        code: "EUR",
-        table: 'A',
-      },
-      {
-        id: 3,
-        code: "USD",
-        table: 'A',
-      }
-    ];
-    commit("FETCH_USER_CURRENCIES", mockResponseFromApi);
+    const response = auth.getUserCurrencies(payload);
+  
+    commit("FETCH_USER_CURRENCIES", response);
   },
+  addUserCurrency({commit, state}, payload) {
+    const userCurrency = 
+      {
+        code: payload.selected,
+        options: {
+          last: payload.timePerioid,
+          type: payload.selectionType
+        },
+        uid: payload.user,
+      }
+      for(var i = 0; i< state.currencies.length; i++){
+        const rates = state.currencies[i][0].rates;
+        if(rates.find(x => x.code === userCurrency.code)){
+          userCurrency.table = state.currencies[i][0].table
+        }
+      }
+      userCurrency.id = uuid();
+      auth.addUserCurrency(userCurrency);
+    commit("ADD_USER_CURRENCY", userCurrency);
+  },
+  updateUserCurrencySetting({commit}, payload) {
+    const userCurrency = 
+    {
+      code: payload.code,
+      options: payload.options,
+      uid: payload.user,
+      table: payload.table
+    }
+    auth.updateUserCurrency(payload.id, userCurrency);
+    commit("UPDATE_USER_CURRENCY_SETTINGS", payload)
+  },
+  deleteCurrencyWidget({commit}, payload) {
+    auth.deleteUserCurrency(payload.id);
+    commit("DELETE_CURRENCY_WIDGET", payload.id)
+  }
 };
 
 export default {
