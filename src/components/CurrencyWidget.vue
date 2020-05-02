@@ -87,7 +87,7 @@ export default {
           return `https://api.nbp.pl/api/exchangerates/rates/${table}/${code}/${options.dateFrom}/${options.dateTo}/?format=json`;
         }
       };
-
+          this.areDataLoaded = false;
       fetch(getUrl(options))
         .then(r => r.json())
         .then(response => {

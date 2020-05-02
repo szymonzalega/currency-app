@@ -40,11 +40,6 @@ export default {
   created() {
     this.currencyDataModel = { ...this.currencyData };
   },
-    watch: {
-    currencyDataModel(newCurrencyDataModel) {
-      console.log(newCurrencyDataModel)
-    }
-  },
   computed: {
     displayedDatasets() {
       this.parseData();

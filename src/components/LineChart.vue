@@ -25,15 +25,6 @@ export default {
       chart: null
     };
   },
-  watch: {
-    datasets(newDatasets) {
-      // Replace the datasets and call the update() method on Chart.js
-      // instance to re-render the chart.
-      console.log()
-      this.chart.data.datasets = newDatasets;
-      this.chart.update();
-    }
-  },
   mounted() {      
     this.chart = new Chart(this.$refs.myChart, {
       type: 'line',
