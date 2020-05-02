@@ -11,6 +11,9 @@
     <div v-if="!isSettingsMode">
       <div v-if="areDataLoaded">
         <div class="currencyWidget__titleRow">
+          <div class="optionIcon">
+            <b-icon v-on:click="removeWidget()" icon="trash-fill" font-scale="1.3"></b-icon>
+          </div>
           <div class="title">{{joinTitle}}</div>
           <div class="optionIcon">
             <b-icon v-on:click="openSettings()" icon="gear" font-scale="1.3"></b-icon>
@@ -63,6 +66,7 @@ export default {
     }
   },
   created() {
+    this.widgetSettingsModel = this.data.options;
     this.fetchCurrencyData(this.widgetSettingsModel);
   },
   methods: {
@@ -76,6 +80,7 @@ export default {
       this.widgetSettingsModel = data;
       this.fetchCurrencyData(data);
       this.closeSettings();
+      this.updateUserCurrency(data)
     },
     fetchCurrencyData(options) {
       const getUrl = options => {
@@ -94,6 +99,17 @@ export default {
           this.currency = response;
           this.areDataLoaded = true
           });
+    },
+    updateUserCurrency(options){
+      const user =  this.$store.getters["user/user"].uid;
+
+       let {table, code, id} = this.data;
+
+       this.$store.dispatch("currency/updateUserCurrencySetting", {user, table, code, options, id});
+    },
+    removeWidget() {
+      console.log('id', this.data.id);
+      this.$emit("removeWidget", this.data.id);
     }
   }
 };

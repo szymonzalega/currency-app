@@ -1,7 +1,42 @@
 <template>
-  <div id="newCurrency">
-      {{ data }}
-      //{{ currencies }}
+  <div>
+    <b-button-group>
+      <b-button class = "addCurrency" v-b-modal.modal-prevent-closing > Dodaj walutę </b-button>
+    </b-button-group>
+    <b-modal
+      id="modal-prevent-closing"
+      ref="modal"
+      title="Dodaj nową walutę"
+      @show="resetModal"
+      @hidden="resetModal"
+      @ok="handleOk"
+    >
+      <form ref="form" @submit.stop.prevent="handleSubmit">
+        <b-form-group
+          label="Nazwa waluty"
+          label-for="currency-select"
+        >
+        <b-form-select 
+          v-model="selected" 
+          :options="data" 
+          class="mb-3"> </b-form-select>
+        </b-form-group>       
+      
+        <b-form-group
+          label="Liczba dni"
+          label-for="currency-perioid"
+        >
+        <b-form-input 
+          v-model="timePerioid" 
+          min="1" 
+          max="255" 
+          id="dayAmount" 
+          size="sm"
+          type="number"></b-form-input>
+        </b-form-group>
+        
+      </form>
+    </b-modal>
   </div>
 </template>
 
@@ -10,31 +45,41 @@ export default {
   name: 'NewCurrency',
   data() {
     return {
-      currencies: []
+      options: [],
+      selected: '',
+      timePerioid: null
     };
   },
-  created() {
-    this.getCurrenciesFromStore();
+  props: {
+    data: {}
   },
   methods: {
-    getCurrenciesFromStore() {
-      this.$store.dispatch("currency/fetchCurrencies");
-      this.currencies = this.$store.getters["currency/getCurrencies"];
+    resetModal() {
+        this.selected = '';
+        this.timePerioid = null;
+    },
+    handleOk(bvModalEvt) {
+        bvModalEvt.preventDefault();
+        this.handleSubmit();
+    },
+    handleSubmit() {
+        const timePerioid = this.timePerioid;
+        const selected = this.selected;
+        const user =  this.$store.getters["user/user"].uid;
+        const selectionType ="LAST_DAYS";
+        this.$store.dispatch("currency/addUserCurrency", {selected, timePerioid, user, selectionType} );
+        this.$nextTick(() => {
+          this.$bvModal.hide('modal-prevent-closing');
+        });
     }
   },
-  props: {
-    data: String
-  }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-    #newCurrency {
-        height: 50px;
-        width: 50vw;
-        margin: 1em;
-        background-color: #33394c;
-    }
-
+.addCurrency {
+  margin: 2rem;
+  display: flex;
+}
 </style>
