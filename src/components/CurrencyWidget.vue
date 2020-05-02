@@ -24,7 +24,9 @@
           <div class="exchangeRate--value">{{currency.rates[0].mid}}&nbsp;PLN</div>
         </div>
         <!-- dane -->
-        <span style="font-size: 7px;">{{currency}}</span>
+        <currency-price
+          v-bind:currencyData="currency">
+        </currency-price>
       </div>
     </div>
   </div>
@@ -32,7 +34,7 @@
 
 <script>
 import WidgetSettings from "./WidgetSettings.vue";
-
+import CurrencyPrice from "./CurrencyPrice.vue";
 export default {
   name: "CurrencyWidget",
   data: function() {
@@ -42,7 +44,7 @@ export default {
       widgetOption: "LAST_DAYS",
       widgetSettingsModel: {
         type: "LAST_DAYS",
-        last: 10
+        last: 20
       },
       areDataLoaded: false
     };
@@ -51,7 +53,8 @@ export default {
     data: {}
   },
   components: {
-    WidgetSettings
+    WidgetSettings,
+    CurrencyPrice
   },
   computed: {
     joinTitle() {
@@ -89,7 +92,7 @@ export default {
           return `https://api.nbp.pl/api/exchangerates/rates/${table}/${code}/${options.dateFrom}/${options.dateTo}/?format=json`;
         }
       };
-
+          this.areDataLoaded = false;
       fetch(getUrl(options))
         .then(r => r.json())
         .then(response => {
