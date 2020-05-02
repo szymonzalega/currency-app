@@ -1,8 +1,11 @@
 {
+  "homepage": "https://szymonzalega.github.io/currency-app/",
   "name": "currency-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -b master -d build",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
@@ -15,6 +18,7 @@
     "core-js": "^3.6.4",
     "firebase": "^7.14.0",
     "firebaseui": "^4.5.0",
+    "gh-pages": "^2.2.0",
     "uuid": "^8.0.0",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",
