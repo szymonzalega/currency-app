@@ -44,12 +44,32 @@
         <div class="options options__dateScope" v-if="widgetSettingsModel.type === 'DATE_SCOPE'">
           <div class="dateField">
             <label for="dateFrom">Data od:</label>
-            <b-form-input v-model="$v.form.dateFrom.$model" id="dateFrom" size="sm" type="date"></b-form-input>
+            <b-form-input
+              v-model="$v.form.dateFrom.$model"
+              id="dateFrom"
+              size="sm"
+              type="date"
+              :state="validateState('dateFrom')"
+              :max="$v.form.dateTo.$model"
+            ></b-form-input>
           </div>
+          <div class="invalid" v-if="!$v.form.dateFrom.required">Pole jest wymagane</div>
           <div class="dateField">
             <label for="dateTo">Data do:</label>
-            <b-form-input v-model="$v.form.dateTo.$model" id="dateTo" size="sm" type="date"></b-form-input>
+            <b-form-input
+              v-model="$v.form.dateTo.$model"
+              id="dateTo"
+              size="sm"
+              type="date"
+              :state="validateState('dateTo')"
+              :min="$v.form.dateFrom.$model"
+            ></b-form-input>
           </div>
+          <div class="invalid" v-if="!$v.form.dateTo.required">Pole jest wymagane</div>
+          <div
+            class="invalid"
+            v-if="!$v.form.dateFrom.diffBetweenDates || !$v.form.dateTo.diffBetweenDates"
+          >Maksymalna różnica pomiędzy datami to 367 dni</div>
         </div>
       </div>
     </div>
@@ -59,6 +79,14 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, maxValue } from "vuelidate/lib/validators";
+
+const diffBetweenDates = (value, vm) => {
+  const date1 = new Date(vm.dateFrom);
+  const date2 = new Date(vm.dateTo);
+  const diffTime = Math.abs(date2 - date1);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays <= 367;
+};
 
 export default {
   mixins: [validationMixin],
@@ -80,10 +108,12 @@ export default {
         maxValue: maxValue(255)
       },
       dateTo: {
-        required
+        required,
+        diffBetweenDates
       },
       dateFrom: {
-        required
+        required,
+        diffBetweenDates
       }
     }
   },
@@ -94,35 +124,52 @@ export default {
   created() {
     this.form.last = this.widgetOptions.last;
     this.form.type = this.widgetOptions.type;
-    this.form.dateTo = new Date();
-    this.form.dateFrom = this.widgetOptions.dateFrom;
+    this.form.dateTo = this.widgetOptions.dateTo || this.getParseDate("TODAY");
+    this.form.dateFrom =
+      this.widgetOptions.dateFrom || this.getParseDate("WEEK_AGO");
     this.widgetSettingsModel = { ...this.widgetOptions };
   },
   methods: {
+    getParseDate(option) {
+      let today = new Date();
+
+      if (option == "TODAY") {
+        return today.toISOString().substring(0, 10);
+      }
+      if (option == "WEEK_AGO") {
+        today.setDate(today.getDate() - 7);
+        return today.toISOString().substring(0, 10);
+      }
+    },
     validateState(name) {
       const { $dirty, $error } = this.$v.form[name];
       return $dirty ? !$error : null;
     },
-
     save() {
       this.$v.form.$touch();
+      let dataToSave = {};
       if (this.widgetSettingsModel.type == "LAST_DAYS") {
         if (this.$v.form.last.$anyError) {
           return;
         }
+        dataToSave = {
+          type: this.widgetSettingsModel.type,
+          last: this.form.last
+        };
       }
-      
+
       if (this.widgetSettingsModel.type == "DATE_SCOPE") {
         if (this.$v.form.dateTo.$anyError || this.$v.form.dateFrom.$anyError) {
           return;
         }
+        dataToSave = {
+          type: this.widgetSettingsModel.type,
+          dateTo: this.form.dateTo,
+          dateFrom: this.form.dateFrom
+        };
       }
 
-      this.form.type = this.widgetSettingsModel.type
-
-      
-      console.log(this.form);
-      this.$emit("saveSettings", this.form);
+      this.$emit("saveSettings", dataToSave);
     },
     close() {
       this.$emit("closeSettings");
@@ -204,12 +251,13 @@ export default {
   flex-direction: row;
 
   input {
-    max-width: 140px;
+    max-width: 170px;
   }
 
   label {
     margin-bottom: 0;
     margin-right: 10px;
+    width: 100%;
   }
 }
 
