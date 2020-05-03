@@ -24,9 +24,7 @@
           <div class="exchangeRate--value">{{currency.rates[0].mid}}&nbsp;PLN</div>
         </div>
         <!-- dane -->
-        <currency-price
-          v-bind:currencyData="currency">
-        </currency-price>
+        <currency-price v-bind:currencyData="currency"></currency-price>
       </div>
     </div>
   </div>
@@ -58,11 +56,11 @@ export default {
   },
   computed: {
     joinTitle() {
-      if(this.areDataLoaded) {
+      if (this.areDataLoaded) {
         let { currency, code } = this.currency;
         return `${code} (${currency[0].toUpperCase()}${currency.slice(1)})`;
       }
-      return null
+      return null;
     }
   },
   created() {
@@ -80,7 +78,7 @@ export default {
       this.widgetSettingsModel = data;
       this.fetchCurrencyData(data);
       this.closeSettings();
-      this.updateUserCurrency(data)
+      this.updateUserCurrency(data);
     },
     fetchCurrencyData(options) {
       const getUrl = options => {
@@ -92,23 +90,32 @@ export default {
           return `https://api.nbp.pl/api/exchangerates/rates/${table}/${code}/${options.dateFrom}/${options.dateTo}/?format=json`;
         }
       };
-          this.areDataLoaded = false;
+      this.areDataLoaded = false;
       fetch(getUrl(options))
         .then(r => r.json())
         .then(response => {
           this.currency = response;
-          this.areDataLoaded = true
-          });
+          this.areDataLoaded = true;
+        })
+        .catch(() => {
+          this.areDataLoaded = true;
+        });
     },
-    updateUserCurrency(options){
-      const user =  this.$store.getters["user/user"].uid;
+    updateUserCurrency(options) {
+      const user = this.$store.getters["user/user"].uid;
 
-       let {table, code, id} = this.data;
+      let { table, code, id } = this.data;
 
-       this.$store.dispatch("currency/updateUserCurrencySetting", {user, table, code, options, id});
+      this.$store.dispatch("currency/updateUserCurrencySetting", {
+        user,
+        table,
+        code,
+        options,
+        id
+      });
     },
     removeWidget() {
-      console.log('id', this.data.id);
+      console.log("id", this.data.id);
       this.$emit("removeWidget", this.data.id);
     }
   }
