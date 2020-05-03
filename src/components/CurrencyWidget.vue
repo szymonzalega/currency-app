@@ -120,7 +120,6 @@ export default {
       });
     },
     removeWidget() {
-      console.log("id", this.data.id);
       this.$emit("removeWidget", this.data.id);
     }
   }
