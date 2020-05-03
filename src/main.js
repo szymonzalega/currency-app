@@ -6,9 +6,11 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import {store} from '@/store'
 import auth from '@/auth'
+import Vuelidate from 'vuelidate'
 
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
+Vue.use(Vuelidate)
 Vue.config.productionTip = false
 
 new Vue({

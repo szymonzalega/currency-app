@@ -1,5 +1,7 @@
 <template>
   <div class="currencyWidget">
+    <widget-error v-if="isError"></widget-error>
+
     <div v-if="isSettingsMode">
       <widget-settings
         v-bind:widgetOptions="widgetSettingsModel"
@@ -32,6 +34,7 @@
 
 <script>
 import WidgetSettings from "./WidgetSettings.vue";
+import WidgetError from "./WidgetError.vue";
 import CurrencyPrice from "./CurrencyPrice.vue";
 export default {
   name: "CurrencyWidget",
@@ -40,11 +43,9 @@ export default {
       currency: {},
       isSettingsMode: false,
       widgetOption: "LAST_DAYS",
-      widgetSettingsModel: {
-        type: "LAST_DAYS",
-        last: 20
-      },
-      areDataLoaded: false
+      widgetSettingsModel: {},
+      areDataLoaded: false,
+      isError: false
     };
   },
   props: {
@@ -52,6 +53,7 @@ export default {
   },
   components: {
     WidgetSettings,
+    WidgetError,
     CurrencyPrice
   },
   computed: {
@@ -98,7 +100,7 @@ export default {
           this.areDataLoaded = true;
         })
         .catch(() => {
-          this.areDataLoaded = true;
+          this.isError = true;
         });
     },
     updateUserCurrency(options) {
