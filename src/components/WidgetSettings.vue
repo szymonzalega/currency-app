@@ -63,6 +63,7 @@
               type="date"
               :state="validateState('dateTo')"
               :min="$v.form.dateFrom.$model"
+              :max="this.today"
             ></b-form-input>
           </div>
           <div class="invalid" v-if="!$v.form.dateTo.required">Pole jest wymagane</div>
@@ -98,6 +99,7 @@ export default {
         dateTo: null,
         dateFrom: null
       },
+      today: this.getParseDate("TODAY"),
       widgetSettingsModel: {}
     };
   },
