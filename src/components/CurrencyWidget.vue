@@ -1,5 +1,8 @@
 <template>
   <div class="currencyWidget">
+    <div class="optionIcon" v-if="isError">
+      <b-icon v-on:click="removeWidget()" icon="trash-fill" font-scale="1.3"></b-icon>
+    </div>
     <widget-error v-if="isError"></widget-error>
 
     <div v-if="isSettingsMode">
@@ -117,7 +120,6 @@ export default {
       });
     },
     removeWidget() {
-      console.log("id", this.data.id);
       this.$emit("removeWidget", this.data.id);
     }
   }

@@ -19,6 +19,9 @@ const options = {
       }
     }]
   },
+  resposive: true,
+  maintainAspectRatio: true,
+  aspectRatio: 2
 };
 
 export default {
