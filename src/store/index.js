@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import user from './modules/user'
 import currency from './modules/currency'
+import balance from './modules/balance'
 
 Vue.use(Vuex)
 
@@ -21,6 +22,7 @@ export const store = new Vuex.Store({
     },
     modules: {
         user,
-        currency
+        currency,
+        balance
     }
 })

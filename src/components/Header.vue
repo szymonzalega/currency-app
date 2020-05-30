@@ -3,6 +3,10 @@
     <div class="header__userInfo" v-if="user">
       <img class="header__userPhoto" :src="user.photoURL" />
       <span class="header__userName">{{user.displayName}}</span>
+      <div class="header__balance" v-if="user">
+        <span>Saldo:</span>
+        <span>{{balance}}PLN</span>
+      </div>
     </div>
     <div class="header__logoutButton" v-on:click="logout()">
       <span>Wyloguj</span>
@@ -23,13 +27,26 @@ export default {
       isAuthorizedd: {}
     };
   },
+  created() {
+    this.getUserBalanceFromStore();
+  },
   computed: {
     user() {
       return this.$store.getters["user/user"];
+    },
+    balance() {
+      return this.$store.getters["balance/getUserBalance"];
     }
   },
   methods: {
-    logout: function() {
+    getUserBalanceFromStore() {
+      const user = this.$store.getters["user/user"];
+      const userId = user.uid;
+
+      this.$store.dispatch("balance/fetchUserCurrencies", userId);
+      this.balance = this.$store.getters["balance/getUserBalance"];
+    },
+    logout() {
       auth.logout();
     }
   }
@@ -50,6 +67,20 @@ export default {
     flex-direction: row;
     align-items: center;
     margin: 0.5em;
+  }
+
+  &__balance {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.5em;
+    border: 1px solid transparent;
+    transition: 200ms;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid #fff;
+    }
   }
 
   &__userPhoto {
