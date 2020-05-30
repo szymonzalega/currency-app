@@ -1,9 +1,10 @@
 <template>
   <div class="header">
+    <div class="header__logo" v-on:click="goToHomeView()">$</div>
     <div class="header__userInfo" v-if="user">
       <img class="header__userPhoto" :src="user.photoURL" />
       <span class="header__userName">{{user.displayName}}</span>
-      <div class="header__balance" v-if="user">
+      <div class="header__balance" v-on:click="goToBalanceView()" v-if="user">
         <span>Saldo:</span>
         <span>{{balance}}PLN</span>
       </div>
@@ -39,6 +40,12 @@ export default {
     }
   },
   methods: {
+    goToHomeView() {
+      this.$router.push("/");
+    },
+    goToBalanceView() {
+      this.$router.push("/balance");
+    },
     getUserBalanceFromStore() {
       const user = this.$store.getters["user/user"];
       const userId = user.uid;
@@ -61,6 +68,27 @@ export default {
   justify-content: space-between;
   height: 60px;
   background-color: #1d2432;
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    color: #1d2432;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    margin: 10px;
+    font-weight: 700;
+    font-size: 22px;
+    cursor: pointer;
+    transition: 200ms;
+
+    &:hover {
+      background-color: #626f8f;
+      transform: scale(1.1);
+    }
+  }
 
   &__userInfo {
     display: flex;

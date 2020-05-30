@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
+import Balance from '../views/Balance.vue'
 import auth from '@/auth'
 
 Vue.use(VueRouter)
@@ -11,6 +12,14 @@ const routes = [
     path: '/dashboard',
     name: 'Home',
     component: Home,
+    meta: {
+      requireAuth: true
+    }
+  },
+  {
+    path: '/balance',
+    name: 'Balance',
+    component: Balance,
     meta: {
       requireAuth: true
     }
