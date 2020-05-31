@@ -50,7 +50,7 @@ export default {
       const user = this.$store.getters["user/user"];
       const userId = user.uid;
 
-      this.$store.dispatch("balance/fetchUserCurrencies", userId);
+      this.$store.dispatch("balance/getUserBalance", userId);
       this.balance = this.$store.getters["balance/getUserBalance"];
     },
     logout() {

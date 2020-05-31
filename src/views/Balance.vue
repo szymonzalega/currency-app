@@ -1,18 +1,19 @@
 <template>
   <div id="balance">
     <Header data="HEADER COMPONENT" />
-    Balance
+    <BalanceDashboard />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import Header from '@/components/Header.vue'
-
+import BalanceDashboard from '@/components/BalanceDashboard.vue'
 export default {
-  name: 'Home',
+  name: 'Balance',
   components: {
-    Header
+    Header,
+    BalanceDashboard
   }
 }
 </script>

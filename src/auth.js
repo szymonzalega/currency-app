@@ -37,7 +37,9 @@ const auth = {
       );
 
       if (requireAuth && !user) this.context.$router.push("login");
-      else if (guestOnly && user) this.context.$router.push("/dashboard");
+      else if (guestOnly && user) {
+        this.context.$router.push("/dashboard");
+      }
     });
   },
   authForm(container) {
