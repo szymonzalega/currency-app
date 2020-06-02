@@ -37,7 +37,9 @@
             v-if="!$v.form.amount.enoughMoney"
           >Kwota całkowita przekracza dostępne środki</div>
         </b-form-group>
-        <span v-if="$v.form.selected.$model && $v.form.amount.$model">Całkowita kwota: {{Math.round((result + Number.EPSILON) * 100) / 100}}PLN</span>
+        <span
+          v-if="$v.form.selected.$model && $v.form.amount.$model"
+        >Całkowita kwota: {{Math.round((result + Number.EPSILON) * 100) / 100}}PLN</span>
       </form>
     </b-modal>
   </div>
@@ -111,21 +113,30 @@ export default {
       bvModalEvt.preventDefault();
       this.handleSubmit();
     },
+    getTodayDate() {
+      let today = new Date();
+      return today.toISOString().substring(0, 10);
+    },
     handleSubmit() {
       this.$v.form.$touch();
       if (this.$v.form.$anyError) {
         return;
       }
       const amount = this.form.amount;
-      const selected = this.form.selected.code;
+      const code = this.form.selected.code;
+      const mid = this.form.selected.mid;
       const user = this.$store.getters["user/user"].uid;
       const result = Math.round((this.result + Number.EPSILON) * 100) / 100;
-      console.log(result, amount, selected, user)
-      this.$store.dispatch("currency/addUserCurrency", {
-        selected,
+      this.$store.dispatch("userCurrency/addUserBoughtCurrency", {
+        code,
+        result,
+        mid,
         amount,
-        user
+        user,
+        boughtDate: this.getTodayDate()
       });
+
+      
 
       //TODO zrobic zapis tego i odjac od salda konta
       this.$nextTick(() => {
