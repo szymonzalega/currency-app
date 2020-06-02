@@ -1,8 +1,6 @@
 <template>
   <div>
-    <b-button-group>
-      <b-button class="buyCurrency" v-b-modal.modal-buy-currency>Kup walutę</b-button>
-    </b-button-group>
+    <b-button class="buyCurrency" v-b-modal.modal-buy-currency>Kup walutę</b-button>
     <b-modal
       id="modal-buy-currency"
       ref="modal"
@@ -124,9 +122,13 @@ export default {
       }
       const amount = this.form.amount;
       const code = this.form.selected.code;
+      const table = this.form.selected.table;
       const mid = this.form.selected.mid;
       const user = this.$store.getters["user/user"].uid;
       const result = Math.round((this.result + Number.EPSILON) * 100) / 100;
+      const newAmount = this.form.userBalance - result;
+      console.log(table);
+
       this.$store.dispatch("userCurrency/addUserBoughtCurrency", {
         code,
         result,
@@ -136,11 +138,14 @@ export default {
         boughtDate: this.getTodayDate()
       });
 
-      
+      this.$store.dispatch("balance/setUserBalance", {
+        user,
+        newAmount
+      });
 
       //TODO zrobic zapis tego i odjac od salda konta
       this.$nextTick(() => {
-        this.$bvModal.hide("modal-prevent-closing");
+        this.$bvModal.hide("modal-buy-currency");
       });
     },
     getUserBalance() {

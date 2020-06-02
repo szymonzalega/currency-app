@@ -1,7 +1,7 @@
 import firebase from "firebase";
 
 const currencyService = {
-    addUserBoughtCurrency(userBoughtCurrency) {
+  addUserBoughtCurrency(userBoughtCurrency) {
     firebase
       .firestore()
       .collection("UserCurrencies")
@@ -14,11 +14,11 @@ const currencyService = {
         console.error("Error writing document: ", error);
       });
   },
-  getUserCurrencies(userId) {
+  getUserBoughtCurrencies(userId) {
     const currencies = [];
     firebase
       .firestore()
-      .collection("Currencies")
+      .collection("UserCurrencies")
       .where("uid", "==", userId)
       .get()
       .then(function(querySnapshot) {

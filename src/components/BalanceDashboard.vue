@@ -1,8 +1,24 @@
 <template>
-  <div>
+  <div class="balance-dashboard">
     <view-name name="Inwestycje" />
-    <add-balance />
-    <buy-currency v-bind:data="currencies" />
+    <div class="balance-dashboard__button-row">
+      <add-balance v-bind:currentUser="user" />
+      <send-money
+        v-bind:appUsers="appUsers"
+        v-bind:usersData="usersData"
+        v-bind:actualAmountStatus="actualAccountStatus"
+        v-bind:currentUser="user"
+      />
+      <buy-currency v-bind:data="currencies" />
+    </div>
+    <view-name name="Twoje waluty" />
+    <div class="balance-dashboard__widget-row">
+      <user-currency-widget
+        v-for="currency of userBoughtCurrencies"
+        v-bind:key="currency.id"
+        v-bind:data="currency"
+      />
+    </div>
   </div>
 </template>
 
@@ -10,26 +26,55 @@
 import AddBalance from "./AddBalance.vue";
 import BuyCurrency from "./BuyCurrency.vue";
 import ViewName from "./ViewName.vue";
-
+import SendMoney from "./SendMoney.vue";
+import UserCurrencyWidget from "./UserCurrencyWidget.vue";
 export default {
   name: "BalanceDashboard",
   data: function() {
     return {
       currencies: [],
-      userBalance: 0
+      appUsers: [],
+      usersData: [],
+      actualAccountStatus: {},
+      user: {},
+      userBoughtCurrencies: []
     };
   },
   props: {},
   components: {
     AddBalance,
     BuyCurrency,
-    ViewName
+    ViewName,
+    SendMoney,
+    UserCurrencyWidget
   },
   computed: {},
   created() {
     this.fetchCurrencies();
+    this.getUserBoughtCurrenciesFromStore();
+    this.getApplicationUsers();
+    this.setAppStatus();
   },
   methods: {
+    getUserBoughtCurrenciesFromStore() {
+      const user = this.$store.getters["user/user"];
+      const userId = user.uid;
+
+      this.$store.dispatch("userCurrency/fetchUserBoughtCurrencies", userId);
+      this.userBoughtCurrencies = this.$store.getters[
+        "userCurrency/getUserBoughtCurrencies"
+      ];
+    },
+    getApplicationUsers() {
+      this.usersData = this.$store.getters["user/appUsers"];
+      this.usersData.forEach(element => {
+        this.appUsers.push(element.displayName);
+      });
+    },
+    setAppStatus() {
+      this.actualAccountStatus = this.$store.getters["balance/getUserBalance"];
+      this.user = this.$store.getters["user/user"].uid;
+    },
     fetchCurrencies() {
       const getAllCurrenciesCode = currencies => {
         return currencies
@@ -43,23 +88,8 @@ export default {
             };
           });
       };
-      // const getCurrenciesList = currencies => {
-      //   let options = [];
-      //   for (var i = 0; i < currencies.length; i++) {
-      //     var option = [];
-      //     for (var key in currencies[i]) {
-      //       if (key == "code") {
-      //         option["value"] = currencies[i][key];
-      //       } else if (key == "currency") {
-      //         option["text"] = currencies[i][key];
-      //       }
-      //     }
-      //     options.push(Object.assign({}, option));
-      //   }
-      //   return options;
-      // };
 
-      const getCurrenciesList2 = currencies => {
+      const getCurrenciesList = currencies => {
         return currencies.map(currency => {
           return {
             value: { code: currency.code, mid: currency.mid },
@@ -78,12 +108,14 @@ export default {
         .then(currencies => {
           const currenciesCodes = getAllCurrenciesCode(currencies);
           this.$store.dispatch("currency/storeCurrencies", currencies);
-          this.currencies = getCurrenciesList2(currenciesCodes);
+          this.currencies = getCurrenciesList(currenciesCodes);
           this.$store.dispatch(
             "currency/storeCurrenciesCodes",
             currenciesCodes
           );
         });
+      this.getApplicationUsers();
+      this.setAppStatus();
     }
   }
 };
@@ -91,4 +123,16 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.balance-dashboard {
+  &__button-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  &__widget-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
 </style>

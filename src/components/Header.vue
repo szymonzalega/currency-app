@@ -36,7 +36,8 @@ export default {
       return this.$store.getters["user/user"];
     },
     balance() {
-      return this.$store.getters["balance/getUserBalance"];
+      const balance = this.$store.getters["balance/getUserBalance"];
+      return Math.round((balance + Number.EPSILON) * 100) / 100
     }
   },
   methods: {
@@ -51,7 +52,8 @@ export default {
       const userId = user.uid;
 
       this.$store.dispatch("balance/getUserBalance", userId);
-      this.balance = this.$store.getters["balance/getUserBalance"];
+      const balance = this.$store.getters["balance/getUserBalance"];
+      this.balance = Math.round((balance + Number.EPSILON) * 100) / 100
     },
     logout() {
       auth.logout();
