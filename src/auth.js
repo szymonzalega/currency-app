@@ -28,6 +28,8 @@ const auth = {
 
     firebase.auth().onAuthStateChanged((user) => {
       this.context.$store.dispatch("user/setCurrentUser");
+      this.context.$store.dispatch("user/getAppUsers");
+      this.context.$store.dispatch("user/storeNewUser");
 
       let requireAuth = this.context.$route.matched.some(
         (record) => record.meta.requireAuth

@@ -20,6 +20,9 @@ const mutations = {
   },
   SET_AUDIT_RECORD(state, payload) {
     state.audit.push(payload);
+  },
+  TRANSFER_MONEY(state, balance) {
+    state.balance = balance;
   }
 };
 
@@ -36,6 +39,13 @@ const actions = {
     let documentId = uuid();
     balanceService.storeAuditRecord(payload, documentId);
     commit("SET_AUDIT_RECORD", payload);
+  }, 
+  transferMoney({commit}, payload) {
+    let transferMoneyEvent = { user: payload.userToTransferMoney, currencyAmount: payload.amount }
+    let removeMoneyEvent = {user: payload.user, currencyAmount: payload.newAmount };
+    balanceService.transferMoney(transferMoneyEvent);
+    balanceService.storeUserBalance(removeMoneyEvent);
+    commit('TRANSFER_MONEY', payload.newAmount)
   }
 };
 

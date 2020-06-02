@@ -48,7 +48,36 @@ const balanceService = {
     .catch(function(error) {
       console.error("Error writing document: ", error);
     });
-  }
+  },
+  transferMoney(payload) {
+    let balance;
+    firebase
+    .firestore()
+    .collection("AccountBalance")
+    .where("user", "==", payload.user)
+    .get()
+    .then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+        let document = {};
+        document = doc.data();
+        console.log("Received balance document", document);
+        balance = document.currencyAmount;
+        console.log('user balance')
+        console.log(document)
+        const newBalance = parseInt(balance) + parseInt(payload.currencyAmount);
+        let event = {
+          user: payload.user,
+          currencyAmount: newBalance
+        }
+        balanceService.storeUserBalance(event);
+        });
+     })
+    .catch(function(error) {
+      console.log("Error transfering money: ", error);
+    });
+
+    return balance;
+  },
 };
 
 export default balanceService;
