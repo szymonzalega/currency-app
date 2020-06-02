@@ -1,21 +1,33 @@
 <template>
   <div>
     <b-button-group>
-      <b-button class="addMoney" v-b-modal.modal-prevent-closing>Doładuj konto</b-button>
+      <b-button class="transferMoney" v-b-modal.transferMoney>Wyślij pieniądze</b-button>
     </b-button-group>
     <b-modal
-      id="modal-prevent-closing"
+      id="transferMoney"
       ref="modal"
-      title="Doładuj konto"
+      title="Wyślij pieniądze"
       @show="resetModal"
       @hidden="resetModal"
       @ok="handleOk"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
-        <b-form-group label="Kwota doładowania" label-for="balance-amount">
+         <b-form-group label="Odbiorca" label-for="currency-select">
+          <b-form-select
+            v-model="$v.form.receiver.$model"
+            :options="appUsers"
+            :state="validateState('receiver')"
+            class="mb-3"
+          ></b-form-select>
+          <div class="invalid" v-if="!$v.form.receiver.required">Pole jest wymagane</div>
+        </b-form-group>
+
+
+        <b-form-group label="Kwota przelewu" label-for="balance-amount">
           <b-form-input
             v-model="$v.form.currencyAmount.$model"
             min="1"
+            :max="actualAmountStatus"
             id="currencyAmount"
             size="sm"
             :state="validateState('currencyAmount')"
@@ -35,27 +47,34 @@ import { required, minValue } from "vuelidate/lib/validators";
 
 export default {
   mixins: [validationMixin],
-  name: "AddBalance",
+  name: "SendMoney",
   data() {
     return {
       form: {
         currencyAmount: null,
+        receiver: null
       },
-      currencyAmount: null
+      currencyAmount: null,
+      receiver: null
     };
+  },
+  props: {
+    appUsers: {},
+    usersData: {},
+    actualAmountStatus: Number,
+    currentUser: {}
   },
   validations: {
     form: {
       currencyAmount: {
         required,
-        minValue: minValue(1)
+        minValue: minValue(1),
       },
+      receiver: {
+          required
+      }
     }
-  }, 
-   props: {
-    currentUser: {}
   },
-
   methods: {
     validateState(name) {
       const { $dirty, $error } = this.$v.form[name];
@@ -63,6 +82,7 @@ export default {
     },
     resetModal() {
       this.form.currencyAmount = null;
+      this.form.receiver = null;
     },
     handleOk(bvModalEvt) {
       bvModalEvt.preventDefault();
@@ -73,21 +93,28 @@ export default {
       if (this.$v.form.$anyError) {
         return;
       }
-      let user = this.currentUser;
-      const currentBalance = this.$store.getters["balance/getUserBalance"];
-      let currencyAmount = parseInt(currentBalance) + parseInt(this.form.currencyAmount);
-      this.$store.dispatch("balance/addUserBalance", {
-        currencyAmount,
+      const user = this.currentUser;
+      const userToTransferMoney= this.usersData.find(x => x.displayName === this.form.receiver).userId;
+      let amount = this.form.currencyAmount;
+      let newAmount = parseInt(this.actualAmountStatus) - parseInt(amount)
+      this.$store.dispatch("balance/transferMoney", {
+        amount,
         user,
+        userToTransferMoney,
+        newAmount
       });
-      let event = 'Użytkownik doładował konto kwotą ' + this.form.currencyAmount + ' złotych';
+      let event = 'Użytkownik przesłał kwotę ' + this.form.currencyAmount + ' złotych użytkownikowi' + this.form.receiver;
       this.$store.dispatch("balance/setAuditRecord", {
         event,
         user
-      });
-
+      });   
+      event = 'Użytkownik otrzymał kwotę ' + this.form.currencyAmount + ' złotych od użytkownika' + this.currentUser.displayName;
+      this.$store.dispatch("balance/setAuditRecord", {
+        event,
+        userToTransferMoney
+      });         
       this.$nextTick(() => {
-        this.$bvModal.hide("modal-prevent-closing");
+        this.$bvModal.hide("transferMoney");
       });
     }
   }
@@ -102,7 +129,7 @@ export default {
   font-size: 80%;
   color: #dc3545;
 }
-.addMoney {
+.transferMoney {
   margin: 2rem;
   display: flex;
 }
