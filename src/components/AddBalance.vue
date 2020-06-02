@@ -32,7 +32,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, minValue } from "vuelidate/lib/validators";
-
+import {datetimeNow} from '../shared/time'
 export default {
   mixins: [validationMixin],
   name: "AddBalance",
@@ -81,11 +81,13 @@ export default {
         user,
       });
       let event = 'Użytkownik doładował konto kwotą ' + this.form.currencyAmount + ' złotych';
+      let time = datetimeNow();
       this.$store.dispatch("balance/setAuditRecord", {
         event,
-        user
+        user,
+        time
       });
-
+      console.log(Date.now())
       this.$nextTick(() => {
         this.$bvModal.hide("modal-prevent-closing");
       });

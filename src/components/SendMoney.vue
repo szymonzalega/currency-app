@@ -44,6 +44,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, minValue } from "vuelidate/lib/validators";
+import {datetimeNow} from '../shared/time'
 
 export default {
   mixins: [validationMixin],
@@ -103,15 +104,18 @@ export default {
         userToTransferMoney,
         newAmount
       });
+      
       let event = 'Użytkownik przesłał kwotę ' + this.form.currencyAmount + ' złotych użytkownikowi' + this.form.receiver;
+      let time = datetimeNow();
       this.$store.dispatch("balance/setAuditRecord", {
         event,
-        user
+        user,
+        time
       });   
       event = 'Użytkownik otrzymał kwotę ' + this.form.currencyAmount + ' złotych od użytkownika' + this.currentUser.displayName;
       this.$store.dispatch("balance/setAuditRecord", {
         event,
-        userToTransferMoney
+        user:userToTransferMoney
       });         
       this.$nextTick(() => {
         this.$bvModal.hide("transferMoney");
