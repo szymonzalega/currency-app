@@ -1,8 +1,13 @@
 <template>
   <div class="header">
+    <div class="header__logo" v-on:click="goToHomeView()">$</div>
     <div class="header__userInfo" v-if="user">
       <img class="header__userPhoto" :src="user.photoURL" />
       <span class="header__userName">{{user.displayName}}</span>
+      <div class="header__balance" v-on:click="goToBalanceView()" v-if="user">
+        <span>Saldo:</span>
+        <span>{{balance}}PLN</span>
+      </div>
     </div>
     <div class="header__logoutButton" v-on:click="logout()">
       <span>Wyloguj</span>
@@ -23,13 +28,32 @@ export default {
       isAuthorizedd: {}
     };
   },
+  created() {
+    this.getUserBalanceFromStore();
+  },
   computed: {
     user() {
       return this.$store.getters["user/user"];
+    },
+    balance() {
+      return this.$store.getters["balance/getUserBalance"];
     }
   },
   methods: {
-    logout: function() {
+    goToHomeView() {
+      this.$router.push("/");
+    },
+    goToBalanceView() {
+      this.$router.push("/balance");
+    },
+    getUserBalanceFromStore() {
+      const user = this.$store.getters["user/user"];
+      const userId = user.uid;
+
+      this.$store.dispatch("balance/getUserBalance", userId);
+      this.balance = this.$store.getters["balance/getUserBalance"];
+    },
+    logout() {
       auth.logout();
     }
   }
@@ -45,11 +69,46 @@ export default {
   height: 60px;
   background-color: #1d2432;
 
+  &__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    color: #1d2432;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    margin: 10px;
+    font-weight: 700;
+    font-size: 22px;
+    cursor: pointer;
+    transition: 200ms;
+
+    &:hover {
+      background-color: #626f8f;
+      transform: scale(1.1);
+    }
+  }
+
   &__userInfo {
     display: flex;
     flex-direction: row;
     align-items: center;
     margin: 0.5em;
+  }
+
+  &__balance {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.5em;
+    border: 1px solid transparent;
+    transition: 200ms;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid #fff;
+    }
   }
 
   &__userPhoto {

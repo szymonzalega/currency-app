@@ -1,5 +1,5 @@
 // import Vue from 'vue'
-import auth from '@/auth'
+import currencyService from '../../service/currencyService'
 import { v4 as uuid } from 'uuid';
 
 const state = () => ({
@@ -47,7 +47,7 @@ const actions = {
     commit("STORE_CURRENCIES", payload);
   },
   fetchUserCurrencies({ commit }, payload) {
-    const response = auth.getUserCurrencies(payload);
+    const response = currencyService.getUserCurrencies(payload);
   
     commit("FETCH_USER_CURRENCIES", response);
   },
@@ -68,7 +68,7 @@ const actions = {
         }
       }
       userCurrency.id = uuid();
-      auth.addUserCurrency(userCurrency);
+      currencyService.addUserCurrency(userCurrency);
     commit("ADD_USER_CURRENCY", userCurrency);
   },
   updateUserCurrencySetting({commit}, payload) {
@@ -79,11 +79,11 @@ const actions = {
       uid: payload.user,
       table: payload.table
     }
-    auth.updateUserCurrency(payload.id, userCurrency);
+    currencyService.updateUserCurrency(payload.id, userCurrency);
     commit("UPDATE_USER_CURRENCY_SETTINGS", payload)
   },
   deleteCurrencyWidget({commit}, payload) {
-    auth.deleteUserCurrency(payload.id);
+    currencyService.deleteUserCurrency(payload.id);
     commit("DELETE_CURRENCY_WIDGET", payload.id)
   }
 };

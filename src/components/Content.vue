@@ -1,5 +1,6 @@
 <template>
   <div class="content">
+    <view-name name="Obserwowane waluty" />
     <new-currency 
       v-bind:data="currencies" 
     />
@@ -17,6 +18,7 @@
 <script>
 import NewCurrency from "./NewCurrency.vue";
 import CurrencyWidget from "./CurrencyWidget.vue";
+import ViewName from "./ViewName.vue";
 
 export default {
   name: "Content",
@@ -32,7 +34,8 @@ export default {
   },
   components: {
     NewCurrency,
-    CurrencyWidget
+    CurrencyWidget,
+    ViewName
   },
   methods: {
     getCurrenciesCodes() {
