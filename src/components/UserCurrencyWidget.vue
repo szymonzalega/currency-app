@@ -6,10 +6,12 @@
     <widget-error v-if="isError"></widget-error>
 
     <div v-if="areDataLoaded">
-      <pre>{{data}}</pre>
+      <!-- <pre>{{data}}</pre> -->
       <div class="userCurrencyWidget__titleRow">
         <div class="optionIcon">
-          <b-icon v-on:click="removeWidget()" icon="trash-fill" font-scale="1.3"></b-icon>
+          <sell-currency v-bind:data="data" />
+
+          <!-- <b-icon v-on:click="removeWidget()" icon="trash-fill" font-scale="1.3"></b-icon> -->
         </div>
         <div class="title">{{joinTitle}}</div>
         <div class="optionIcon"></div>
@@ -19,16 +21,12 @@
         <div class="exchangeRate--value">{{currency.rates[0].mid}}&nbsp;PLN</div>
       </div>
       <div class="userCurrencyWidget__exchangeRate exchangeRate">
-        <div class="exchangeRate--label">Liczba jednostek:</div>
-        <div class="exchangeRate--value">{{data.amount}}</div>
+        <div class="exchangeRate--label">Zainwestowane pieniądze:</div>
+        <div class="exchangeRate--value">{{spendMoney}}&nbsp;PLN</div>
       </div>
       <div class="userCurrencyWidget__exchangeRate exchangeRate">
-        <div class="exchangeRate--label">Zainwestowana wartość</div>
-        <div class="exchangeRate--value">{{data.result}}&nbsp;PLN</div>
-      </div>
-      <div class="userCurrencyWidget__exchangeRate exchangeRate">
-        <div class="exchangeRate--label">Bilans na dziś</div>
-        <div class="exchangeRate--value">{{(currency.rates[0].mid * data.amount) - data.result}}&nbsp;PLN</div>
+        <div class="exchangeRate--label">Posiadane jednostki:</div>
+        <div class="exchangeRate--value">{{amount}}</div>
       </div>
       <!-- dane -->
       <currency-price v-bind:currencyData="currency"></currency-price>
@@ -39,13 +37,12 @@
 <script>
 import WidgetError from "./WidgetError.vue";
 import CurrencyPrice from "./CurrencyPrice.vue";
+import SellCurrency from "./SellCurrency.vue";
 export default {
   name: "userCurrencyWidget",
   data: function() {
     return {
       currency: {},
-      widgetOption: "LAST_DAYS",
-      widgetSettingsModel: {},
       areDataLoaded: false,
       isError: false
     };
@@ -55,7 +52,8 @@ export default {
   },
   components: {
     WidgetError,
-    CurrencyPrice
+    CurrencyPrice,
+    SellCurrency
   },
   computed: {
     joinTitle() {
@@ -64,17 +62,77 @@ export default {
         return `${code} (${currency[0].toUpperCase()}${currency.slice(1)})`;
       }
       return null;
+    },
+    spendMoney() {
+      if (this.areDataLoaded) {
+        let { transactions } = this.data;
+        let spendMoney = 0;
+
+        for (let transaction of transactions) {
+          if (transaction.operationType === "BUY") {
+            spendMoney += transaction.result;
+          } else if (transaction.operationType === "SELL") {
+            spendMoney -= transaction.result;
+          }
+        }
+        return Math.round((spendMoney + Number.EPSILON) * 100) / 100;
+      }
+      return null;
+    },
+    amount() {
+      if (this.areDataLoaded) {
+        let { transactions } = this.data;
+        let amount = 0;
+
+        for (let transaction of transactions) {
+          if (transaction.operationType === "BUY") {
+            amount += transaction.amount;
+          } else if (transaction.operationType === "SELL") {
+            amount -= transaction.amount;
+          }
+        }
+
+        return amount;
+      }
+      return null;
     }
   },
   created() {
-    this.widgetSettingsModel = this.data.options;
     this.fetchCurrencyData();
+    this.fetchOneCurrency();
+    this.calculateAllAmountAndMoney();
   },
   methods: {
+    calculateAllAmountAndMoney() {
+      let { transactions } = this.data;
+      let amount = 0;
+      let spendMoney = 0;
+
+      for (let transaction of transactions) {
+        if (transaction.operationType === "BUY") {
+          amount += transaction.amount;
+          spendMoney += transaction.result;
+        } else if (transactions.operationType === "SOLD") {
+          amount -= transactions.amount;
+          spendMoney -= transaction.result;
+        }
+      }
+
+      this.data.allAmount = amount;
+      this.data.spendMoney = spendMoney;
+    },
+    fetchOneCurrency() {
+        let { table, code } = this.data;
+      fetch(`http://api.nbp.pl/api/exchangerates/rates/${table}/${code}/?format=json`)
+      .then(r => r.json())
+      .then(response => {
+          this.data.currentRates = response.rates[0].mid;
+      })
+    }, 
     fetchCurrencyData() {
       const getUrl = () => {
         let { table, code } = this.data;
-        return `https://api.nbp.pl/api/exchangerates/rates/${table}/${code}/2020-05-02/${this.data.boughtDate}/?format=json`;
+        return `https://api.nbp.pl/api/exchangerates/rates/${table}/${code}/2020-05-02/${this.data.transactions[0].actionDate}/?format=json`;
       };
       this.areDataLoaded = false;
       fetch(getUrl())

@@ -23,10 +23,18 @@ const mutations = {
   ADD_USER_BOUGHT_CURRENCY(state, userBoughtCurrencies) {
     state.userBoughtCurrencies.push(userBoughtCurrencies);
   },
-  //   UPDATE_USER_CURRENCY_SETTINGS(state, userCurrency){
-  //     var currencyToUpdate = state.userCurrencies.find(x => x.code == userCurrency.code);
-  //     currencyToUpdate.options = userCurrency.options;
-  //   },
+  SELL_USER_BOUGHT_CURRENCY(state, userBoughtCurrencies) {
+    state.userBoughtCurrencies.push(userBoughtCurrencies);
+  },
+  UPDATE_USER_BOUGHT_CURRENCY(state, userBoughtCurrencies) {
+    const currencyToUpdate = state.userBoughtCurrencies.find(
+      (currency) => currency.code === userBoughtCurrencies.code
+    );
+    const length = userBoughtCurrencies.transactions.length;
+    currencyToUpdate.transactions.push(
+      userBoughtCurrencies.transactions[length - 1]
+    );
+  },
   DELETE_USER_BOUGHT_CURRENCY(state, id) {
     var userCurrencies = [...state.userCurrencies];
     const curr = userCurrencies.filter(function(item) {
@@ -44,17 +52,23 @@ const actions = {
   //     commit("STORE_CURRENCIES", payload);
   //   },
   fetchUserBoughtCurrencies({ commit }, payload) {
-    const response = userCurrencyService.getUserBoughtCurrencies(payload);
-    commit("FETCH_USER_BOUGHT_CURRENCIES", response);
+    return new Promise((resolve, reject) => {
+      userCurrencyService
+        .getUserBoughtCurrencies(payload)
+        .then((response) => {
+          commit("FETCH_USER_BOUGHT_CURRENCIES", response);
+          resolve(response);
+        })
+        .catch((error) => {
+          console.error("Problem with fetch user bought currencies" + error);
+          reject(error);
+        });
+    });
   },
   addUserBoughtCurrency({ commit }, payload) {
     const userBoughtCurrencies = {
       code: payload.code,
-      mid: payload.mid,
-      amount: payload.amount,
-      result: payload.result,
       uid: payload.user,
-      boughtDate: payload.boughtDate,
       id: uuid(),
     };
 
@@ -67,8 +81,81 @@ const actions = {
       }
     }
 
-    userCurrencyService.addUserBoughtCurrency(userBoughtCurrencies);
-    commit("ADD_USER_BOUGHT_CURRENCY", userBoughtCurrencies);
+    let userCurrencies = this.getters["userCurrency/getUserBoughtCurrencies"];
+    console.log(userCurrencies);
+
+    let currencyCode = userCurrencies.find((currency) => {
+      return currency.code === userBoughtCurrencies.code;
+    });
+
+    if (currencyCode !== undefined) {
+      console.log("jest taka waluta bede updejtowal");
+
+      const newTransaction = {
+        operationType: "BUY",
+        mid: payload.mid,
+        amount: payload.amount,
+        result: payload.result,
+        actionDate: payload.actionDate,
+      };
+
+      currencyCode.transactions.push(newTransaction);
+      userCurrencyService.updateUserBoughtCurrency(currencyCode);
+      // commit("UPDATE_USER_BOUGHT_CURRENCY", currencyCode);
+    } else {
+      console.log("to nowa waluta, kupuje");
+      userBoughtCurrencies.transactions = [
+        {
+          operationType: "BUY",
+          mid: payload.mid,
+          amount: payload.amount,
+          result: payload.result,
+          actionDate: payload.actionDate,
+        },
+      ];
+      userCurrencyService.addUserBoughtCurrency(userBoughtCurrencies);
+      commit("ADD_USER_BOUGHT_CURRENCY", userBoughtCurrencies);
+    }
+  },
+  sellUserBoughtCurrency({ commit }, payload) {
+    const userBoughtCurrencies = {
+      code: payload.code,
+      uid: payload.user,
+      id: uuid(),
+    };
+    console.log(commit);
+
+    const currencies = this.getters["currency/getCurrenciesCodes"];
+
+    for (var i = 0; i < currencies.length; i++) {
+      const rates = currencies[i][0].rates;
+      if (rates.find((x) => x.code === userBoughtCurrencies.code)) {
+        userBoughtCurrencies.table = currencies[i][0].table;
+      }
+    }
+
+    let userCurrencies = this.getters["userCurrency/getUserBoughtCurrencies"];
+    console.log(userCurrencies);
+
+    let currencyCode = userCurrencies.find((currency) => {
+      return currency.code === userBoughtCurrencies.code;
+    });
+
+    if (currencyCode !== undefined) {
+      console.log("jest taka waluta bede updejtowal");
+
+      const newTransaction = {
+        operationType: "SELL",
+        mid: payload.mid,
+        amount: payload.amount,
+        result: payload.result,
+        actionDate: payload.actionDate,
+      };
+
+      currencyCode.transactions.push(newTransaction);
+      userCurrencyService.updateUserBoughtCurrency(currencyCode);
+      // commit("UPDATE_USER_BOUGHT_CURRENCY", currencyCode);
+    }
   },
   //   updateUserCurrencySetting({commit}, payload) {
   //     const userCurrency =

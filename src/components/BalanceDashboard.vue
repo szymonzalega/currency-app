@@ -12,7 +12,7 @@
       <buy-currency v-bind:data="currencies" />
     </div>
     <view-name name="Twoje waluty" />
-    <div class="balance-dashboard__widget-row">
+    <div class="balance-dashboard__widget-row" v-if="userBoughtCurrencies">
       <user-currency-widget
         v-for="currency of userBoughtCurrencies"
         v-bind:key="currency.id"
@@ -60,10 +60,13 @@ export default {
       const user = this.$store.getters["user/user"];
       const userId = user.uid;
 
-      this.$store.dispatch("userCurrency/fetchUserBoughtCurrencies", userId);
-      this.userBoughtCurrencies = this.$store.getters[
-        "userCurrency/getUserBoughtCurrencies"
-      ];
+      this.$store
+        .dispatch("userCurrency/fetchUserBoughtCurrencies", userId)
+        .then(() => {
+          this.userBoughtCurrencies = this.$store.getters[
+            "userCurrency/getUserBoughtCurrencies"
+          ];
+        });
     },
     getApplicationUsers() {
       this.usersData = this.$store.getters["user/appUsers"];
