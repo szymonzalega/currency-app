@@ -9,7 +9,7 @@
       <!-- <pre>{{data}}</pre> -->
       <div class="userCurrencyWidget__titleRow">
         <div class="optionIcon">
-          <sell-currency v-bind:data="data" />
+          <sell-currency v-bind:data="data" v-bind:currencyAmount="amount" />
 
           <!-- <b-icon v-on:click="removeWidget()" icon="trash-fill" font-scale="1.3"></b-icon> -->
         </div>
@@ -102,6 +102,9 @@ export default {
     this.fetchOneCurrency();
     this.calculateAllAmountAndMoney();
   },
+  updated() {
+    this.calculateAllAmountAndMoney();
+  },
   methods: {
     calculateAllAmountAndMoney() {
       let { transactions } = this.data;
@@ -112,8 +115,8 @@ export default {
         if (transaction.operationType === "BUY") {
           amount += transaction.amount;
           spendMoney += transaction.result;
-        } else if (transactions.operationType === "SOLD") {
-          amount -= transactions.amount;
+        } else if (transaction.operationType === "SELL") {
+          amount -= transaction.amount;
           spendMoney -= transaction.result;
         }
       }

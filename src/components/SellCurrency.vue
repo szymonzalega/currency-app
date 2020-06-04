@@ -49,7 +49,7 @@ export default {
     return {
       form: {
         amount: null,
-        allAmount: 0
+        allAmount: this.currencyAmount
       },
       modalId: null,
       options: [],
@@ -61,10 +61,9 @@ export default {
   },
   created() {
     this.getUserBalance();
-    this.getAllAmount();
   },
   updated() {
-    this.getAllAmount();
+      this.form.allAmount = this.currencyAmount;
   },
   computed: {
     result() {
@@ -83,7 +82,8 @@ export default {
     }
   },
   props: {
-    data: {}
+    data: {},
+    currencyAmount: Number
   },
   methods: {
     validateState(name) {
@@ -137,9 +137,6 @@ export default {
     },
     getUserBalance() {
       this.form.userBalance = this.$store.getters["balance/getUserBalance"];
-    },
-    getAllAmount() {
-      this.form.allAmount = this.data.allAmount;
     }
   }
 };
