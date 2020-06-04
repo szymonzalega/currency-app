@@ -1,5 +1,5 @@
 <template>
-  <div class="userCurrencyWidget">
+  <div v-if="amount !== 0" class="userCurrencyWidget">
     <div class="optionIcon" v-if="isError">
       <b-icon v-on:click="removeWidget()" icon="trash-fill" font-scale="1.3"></b-icon>
     </div>
