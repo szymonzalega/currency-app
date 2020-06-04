@@ -135,7 +135,8 @@ export default {
     fetchCurrencyData() {
       const getUrl = () => {
         let { table, code } = this.data;
-        return `https://api.nbp.pl/api/exchangerates/rates/${table}/${code}/2020-05-02/${this.data.transactions[0].actionDate}/?format=json`;
+        let today = this.getParsedTodayDate();
+        return `https://api.nbp.pl/api/exchangerates/rates/${table}/${code}/${this.data.transactions[0].actionDate}/${today}/?format=json`;
       };
       this.areDataLoaded = false;
       fetch(getUrl())
@@ -150,6 +151,10 @@ export default {
     },
     removeWidget() {
       this.$emit("removeWidget", this.data.id);
+    },
+    getParsedTodayDate() {
+      let today = new Date();
+      return today.toISOString().substring(0, 10);
     }
   }
 };
@@ -158,7 +163,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .userCurrencyWidget {
-  height: 350px;
+  height: 410[x];
   width: 530px;
   margin: 1em;
   padding: 10px;
