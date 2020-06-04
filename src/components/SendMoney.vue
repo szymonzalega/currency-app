@@ -107,7 +107,7 @@ export default {
       let event =
         "Użytkownik przesłał kwotę " +
         this.form.currencyAmount +
-        " złotych użytkownikowi" +
+        " złotych użytkownikowi " +
         this.form.receiver;
       let time = datetimeNow();
       this.$store.dispatch("balance/setAuditRecord", {

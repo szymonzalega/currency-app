@@ -28,6 +28,10 @@
         <div class="exchangeRate--label">Posiadane jednostki:</div>
         <div class="exchangeRate--value">{{amount}}</div>
       </div>
+      <div class="userCurrencyWidget__exchangeRate exchangeRate">
+        <div class="exchangeRate--label">Bilans na dzisiaj:</div>
+        <div class="exchangeRate--value">{{balance}}&nbsp;PLN</div>
+      </div>
       <!-- dane -->
       <currency-price v-bind:currencyData="currency"></currency-price>
     </div>
@@ -79,6 +83,10 @@ export default {
       }
       return null;
     },
+    balance() {
+      let balance = (this.data.currentRates * this.amount) - this.spendMoney;
+      return Math.round((balance + Number.EPSILON) * 100) / 100;
+    },
     amount() {
       if (this.areDataLoaded) {
         let { transactions } = this.data;
@@ -125,13 +133,15 @@ export default {
       this.data.spendMoney = spendMoney;
     },
     fetchOneCurrency() {
-        let { table, code } = this.data;
-      fetch(`http://api.nbp.pl/api/exchangerates/rates/${table}/${code}/?format=json`)
-      .then(r => r.json())
-      .then(response => {
+      let { table, code } = this.data;
+      fetch(
+        `http://api.nbp.pl/api/exchangerates/rates/${table}/${code}/?format=json`
+      )
+        .then(r => r.json())
+        .then(response => {
           this.data.currentRates = response.rates[0].mid;
-      })
-    }, 
+        });
+    },
     fetchCurrencyData() {
       const getUrl = () => {
         let { table, code } = this.data;
