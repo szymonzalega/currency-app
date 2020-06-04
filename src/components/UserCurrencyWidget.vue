@@ -14,7 +14,9 @@
           <!-- <b-icon v-on:click="removeWidget()" icon="trash-fill" font-scale="1.3"></b-icon> -->
         </div>
         <div class="title">{{joinTitle}}</div>
-        <div class="optionIcon"></div>
+        <div class="optionIcon">
+          <b-icon v-on:click="goToHistoryView()" icon="clock" font-scale="1.3"></b-icon>
+        </div>
       </div>
       <div class="userCurrencyWidget__exchangeRate exchangeRate">
         <div class="exchangeRate--label">Aktualny kurs:</div>
@@ -84,7 +86,7 @@ export default {
       return null;
     },
     balance() {
-      let balance = (this.data.currentRates * this.amount) - this.spendMoney;
+      let balance = this.data.currentRates * this.amount - this.spendMoney;
       return Math.round((balance + Number.EPSILON) * 100) / 100;
     },
     amount() {
@@ -114,6 +116,10 @@ export default {
     this.calculateAllAmountAndMoney();
   },
   methods: {
+    goToHistoryView() {
+      const currencyId = this.data.id;
+      this.$router.push(`/currencyHistory/${currencyId}`);
+    },
     calculateAllAmountAndMoney() {
       let { transactions } = this.data;
       let amount = 0;
