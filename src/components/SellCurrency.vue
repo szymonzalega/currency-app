@@ -1,6 +1,8 @@
 <template>
   <div>
-    <b-button class="sellCurrency" @click="$bvModal.show(`${modalId}`)">Sprzedaj walutę</b-button>
+    <!-- <b-button class="sellCurrency" @click="$bvModal.show(`${modalId}`)">Sprzedaj walutę</b-button> -->
+          <b-icon @click="$bvModal.show(`${modalId}`)" icon="graph-down" font-scale="1.3"></b-icon>
+
 
     <b-modal
       v-bind:id="modalId"
