@@ -1,8 +1,6 @@
 <template>
   <div>
-    <b-button-group>
-      <b-button class="transferMoney" v-b-modal.transferMoney>Wyślij pieniądze</b-button>
-    </b-button-group>
+    <b-button class="transferMoney" v-b-modal.transferMoney>Wyślij pieniądze</b-button>
     <b-modal
       id="transferMoney"
       ref="modal"
@@ -12,7 +10,7 @@
       @ok="handleOk"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
-         <b-form-group label="Odbiorca" label-for="currency-select">
+        <b-form-group label="Odbiorca" label-for="currency-select">
           <b-form-select
             v-model="$v.form.receiver.$model"
             :options="appUsers"
@@ -21,7 +19,6 @@
           ></b-form-select>
           <div class="invalid" v-if="!$v.form.receiver.required">Pole jest wymagane</div>
         </b-form-group>
-
 
         <b-form-group label="Kwota przelewu" label-for="balance-amount">
           <b-form-input
@@ -44,7 +41,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, minValue } from "vuelidate/lib/validators";
-import {datetimeNow} from '../shared/time'
+import { datetimeNow } from "../shared/time";
 
 export default {
   mixins: [validationMixin],
@@ -69,10 +66,10 @@ export default {
     form: {
       currencyAmount: {
         required,
-        minValue: minValue(1),
+        minValue: minValue(1)
       },
       receiver: {
-          required
+        required
       }
     }
   },
@@ -95,28 +92,38 @@ export default {
         return;
       }
       const user = this.currentUser;
-      const userToTransferMoney= this.usersData.find(x => x.displayName === this.form.receiver).userId;
+      const userToTransferMoney = this.usersData.find(
+        x => x.displayName === this.form.receiver
+      ).userId;
       let amount = this.form.currencyAmount;
-      let newAmount = parseInt(this.actualAmountStatus) - parseInt(amount)
+      let newAmount = parseInt(this.actualAmountStatus) - parseInt(amount);
       this.$store.dispatch("balance/transferMoney", {
         amount,
         user,
         userToTransferMoney,
         newAmount
       });
-      
-      let event = 'Użytkownik przesłał kwotę ' + this.form.currencyAmount + ' złotych użytkownikowi' + this.form.receiver;
+
+      let event =
+        "Użytkownik przesłał kwotę " +
+        this.form.currencyAmount +
+        " złotych użytkownikowi " +
+        this.form.receiver;
       let time = datetimeNow();
       this.$store.dispatch("balance/setAuditRecord", {
         event,
         user,
         time
-      });   
-      event = 'Użytkownik otrzymał kwotę ' + this.form.currencyAmount + ' złotych od użytkownika' + this.currentUser.displayName;
+      });
+      event =
+        "Użytkownik otrzymał kwotę " +
+        this.form.currencyAmount +
+        " złotych od użytkownika" +
+        this.currentUser.displayName;
       this.$store.dispatch("balance/setAuditRecord", {
         event,
-        user:userToTransferMoney
-      });         
+        user: userToTransferMoney
+      });
       this.$nextTick(() => {
         this.$bvModal.hide("transferMoney");
       });

@@ -1,8 +1,6 @@
 <template>
   <div>
-    <b-button-group>
-      <b-button class="addMoney" v-b-modal.modal-prevent-closing>Doładuj konto</b-button>
-    </b-button-group>
+    <b-button class="addMoney" v-b-modal.modal-prevent-closing>Doładuj konto</b-button>
     <b-modal
       id="modal-prevent-closing"
       ref="modal"
@@ -32,14 +30,14 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, minValue } from "vuelidate/lib/validators";
-import {datetimeNow} from '../shared/time'
+import { datetimeNow } from "../shared/time";
 export default {
   mixins: [validationMixin],
   name: "AddBalance",
   data() {
     return {
       form: {
-        currencyAmount: null,
+        currencyAmount: null
       },
       currencyAmount: null
     };
@@ -49,10 +47,10 @@ export default {
       currencyAmount: {
         required,
         minValue: minValue(1)
-      },
+      }
     }
-  }, 
-   props: {
+  },
+  props: {
     currentUser: {}
   },
 
@@ -75,19 +73,23 @@ export default {
       }
       let user = this.currentUser;
       const currentBalance = this.$store.getters["balance/getUserBalance"];
-      let currencyAmount = parseInt(currentBalance) + parseInt(this.form.currencyAmount);
+      let currencyAmount =
+        parseInt(currentBalance) + parseInt(this.form.currencyAmount);
       this.$store.dispatch("balance/addUserBalance", {
         currencyAmount,
-        user,
+        user
       });
-      let event = 'Użytkownik doładował konto kwotą ' + this.form.currencyAmount + ' złotych';
+      let event =
+        "Użytkownik doładował konto kwotą " +
+        this.form.currencyAmount +
+        " złotych";
       let time = datetimeNow();
       this.$store.dispatch("balance/setAuditRecord", {
         event,
         user,
         time
       });
-      console.log(Date.now())
+      console.log(Date.now());
       this.$nextTick(() => {
         this.$bvModal.hide("modal-prevent-closing");
       });
