@@ -10,6 +10,7 @@
         v-bind:currentUser="user"
       />
       <buy-currency v-bind:data="currencies" />
+      <b-button class="history" @click="navigateToHistoryView"> Historia operacji </b-button>
     </div>
     <view-name name="Twoje waluty" />
     <div class="balance-dashboard__widget-row" v-if="userBoughtCurrencies">
@@ -122,6 +123,9 @@ export default {
         });
       this.getApplicationUsers();
       this.setAppStatus();
+    },
+    navigateToHistoryView(){
+      this.$router.push(`/accountHistory`);
     }
   }
 };
@@ -140,5 +144,9 @@ export default {
     flex-direction: row;
     flex-wrap: wrap;
   }
+}
+.history {
+  margin: 2rem;
+  display: flex;
 }
 </style>
