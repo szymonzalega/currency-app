@@ -39,6 +39,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
+import * as moment from "moment";
 
 const enoughAmount = (value, vm) => {
   return vm.amount <= vm.allAmount;
@@ -132,6 +133,14 @@ export default {
         newAmount
       });
 
+      let event = "Użytkownik sprzedał walutę" + code + "w ilości" + amount + "po cenie" + mid;
+      let time = moment().format('MMMM Do YYYY, h:mm:ss a');
+      this.$store.dispatch("audit/setAuditRecord", {
+        event,
+        user,
+        time
+      });
+      
       //TODO zrobic zapis tego i odjac od salda konta
       this.$nextTick(() => {
         this.$bvModal.hide(this.modalId);
