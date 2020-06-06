@@ -36,19 +36,6 @@ const balanceService = {
       console.error("Error writing document: ", error);
     });
   },
-  storeAuditRecord(payload,documentId) {
-    firebase
-    .firestore()
-    .collection("Audit")
-    .doc(documentId)
-    .set(payload)
-    .then(function() {
-      console.log("Document successfully written!");
-    })
-    .catch(function(error) {
-      console.error("Error writing document: ", error);
-    });
-  },
   transferMoney(payload) {
     let balance;
     firebase

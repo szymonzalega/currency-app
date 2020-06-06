@@ -45,7 +45,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, minValue } from "vuelidate/lib/validators";
-import { datetimeNow } from "../shared/time";
+import * as moment from "moment";
 
 const enoughMoney = (value, vm) => {
   let amount = 0;
@@ -115,7 +115,9 @@ export default {
         x => x.displayName === this.form.receiver
       ).userId;
       let amount = this.form.currencyAmount;
-      let newAmount = parseInt(this.this.form.userBalance) - parseInt(amount);
+      let actualAccountStatus = this.form.userBalance;
+      let newAmount = parseInt(actualAccountStatus) - parseInt(amount);      
+      
       this.$store.dispatch("balance/transferMoney", {
         amount,
         user,
@@ -128,8 +130,9 @@ export default {
         this.form.currencyAmount +
         " złotych użytkownikowi " +
         this.form.receiver;
-      let time = datetimeNow();
-      this.$store.dispatch("balance/setAuditRecord", {
+      let time = moment().format('MMMM Do YYYY, h:mm:ss a');
+
+      this.$store.dispatch("audit/setAuditRecord", {
         event,
         user,
         time
@@ -139,7 +142,7 @@ export default {
         this.form.currencyAmount +
         " złotych od użytkownika" +
         this.currentUser.displayName;
-      this.$store.dispatch("balance/setAuditRecord", {
+      this.$store.dispatch("audit/setAuditRecord", {
         event,
         user: userToTransferMoney
       });

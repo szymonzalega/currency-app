@@ -46,7 +46,8 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
-
+import * as moment from "moment";
+ 
 const enoughMoney = (value, vm) => {
   let currencyMid = 0;
   let amount = 0;
@@ -141,6 +142,14 @@ export default {
       this.$store.dispatch("balance/setUserBalance", {
         user,
         newAmount
+      });
+
+      let event = "Użytkownik sprzedał walutę" + code + "w ilości" + amount + "po cenie" + mid;
+      let time = moment().format('MMMM Do YYYY, h:mm:ss a');
+      this.$store.dispatch("audit/setAuditRecord", {
+        event,
+        user,
+        time
       });
 
       //TODO zrobic zapis tego i odjac od salda konta

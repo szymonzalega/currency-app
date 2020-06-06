@@ -17,13 +17,15 @@
 import NewCurrency from "./NewCurrency.vue";
 import CurrencyWidget from "./CurrencyWidget.vue";
 import ViewName from "./ViewName.vue";
+import * as moment from "moment";
 
 export default {
   name: "Content",
   data() {
     return {
       userCurrencies: [],
-      currencies: []
+      currencies: [],
+      user: null
     };
   },
   created() {
@@ -40,8 +42,8 @@ export default {
       this.currencies = this.$store.getters["currency/getCurrenciesCodes"];
     },
     getUserCurrenciesFromStore() {
-      const user = this.$store.getters["user/user"];
-      const userId = user.uid;
+      this.user = this.$store.getters["user/user"];
+      const userId = this.user.uid;
 
       this.$store.dispatch("currency/fetchUserCurrencies", userId);
       this.userCurrencies = this.$store.getters["currency/getUserCurrencies"];
@@ -95,6 +97,14 @@ export default {
       const id = data;
       this.$store.dispatch("currency/deleteCurrencyWidget", { id });
       this.userCurrencies = this.$store.getters["currency/getUserCurrencies"];
+      let event = "Widżet waluty został usunięty przez użytkownika";
+      let time = moment().format('MMMM Do YYYY, h:mm:ss a');
+      let user = this.user.uid;
+      this.$store.dispatch("audit/setAuditRecord", {
+        event,
+        user,
+        time
+      });
     }
   },
   props: {

@@ -39,6 +39,8 @@
 import WidgetSettings from "./WidgetSettings.vue";
 import WidgetError from "./WidgetError.vue";
 import CurrencyPrice from "./CurrencyPrice.vue";
+import * as moment from "moment";
+
 export default {
   name: "CurrencyWidget",
   data: function() {
@@ -117,6 +119,14 @@ export default {
         code,
         options,
         id
+      });
+
+      let event = "Ustawienia waluty" + code + "zostały zmienione";
+      let time = moment().format('MMMM Do YYYY, h:mm:ss a');
+      this.$store.dispatch("audit/setAuditRecord", {
+        event,
+        user,
+        time
       });
     },
     removeWidget() {

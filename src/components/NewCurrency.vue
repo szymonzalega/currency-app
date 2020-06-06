@@ -43,6 +43,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, maxValue } from "vuelidate/lib/validators";
+import * as moment from "moment";
 
 export default {
   mixins: [validationMixin],
@@ -99,6 +100,14 @@ export default {
         timePerioid,
         user,
         selectionType
+      });
+
+      let event = "Użytkownik dodał nową walutę" + selected;
+      let time = moment().format('MMMM Do YYYY, h:mm:ss a');
+      this.$store.dispatch("audit/setAuditRecord", {
+        event,
+        user,
+        time
       });
       this.$nextTick(() => {
         this.$bvModal.hide("modal-prevent-closing");
