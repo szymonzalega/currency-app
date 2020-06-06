@@ -12,6 +12,9 @@ const getters = {
 const mutations = {
   SET_AUDIT_RECORD(state, payload) {
     state.audit.push(payload);
+  },
+  GET_AUDIT_RECORDS(state, payload) {
+      state.audit = payload;
   }
 };
 
@@ -20,7 +23,20 @@ const actions = {
     let documentId = uuid();
     auditService.storeAuditRecord(payload, documentId);
     commit("SET_AUDIT_RECORD", payload);
-  }
+  },
+  getAuditRecords({commit}, payload) {
+    return new Promise((resolve, reject) => {
+        auditService
+          .getAuditRecords(payload)
+          .then((response) => {
+            commit("GET_AUDIT_RECORDS", response);
+            resolve(response);
+          })
+          .catch((error) => {
+            console.error("Problem with getting autit records" + error);
+            reject(error);
+          });
+      });  }
 };
 
 export default {

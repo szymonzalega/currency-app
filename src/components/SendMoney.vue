@@ -137,11 +137,13 @@ export default {
         user,
         time
       });
+      let currentuserName = this.$store.getters["user/user"].displayName;
+
       event =
         "Użytkownik otrzymał kwotę " +
         this.form.currencyAmount +
         " złotych od użytkownika" +
-        this.currentUser.displayName;
+        currentuserName;
       this.$store.dispatch("audit/setAuditRecord", {
         event,
         user: userToTransferMoney
