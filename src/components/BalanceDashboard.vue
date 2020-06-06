@@ -50,10 +50,10 @@ export default {
   },
   computed: {},
   created() {
+    this.setAppStatus();
     this.fetchCurrencies();
     this.getUserBoughtCurrenciesFromStore();
     this.getApplicationUsers();
-    this.setAppStatus();
   },
   methods: {
     getUserBoughtCurrenciesFromStore() {
@@ -70,8 +70,11 @@ export default {
     },
     getApplicationUsers() {
       this.usersData = this.$store.getters["user/appUsers"];
+      this.appUsers = [];
       this.usersData.forEach(element => {
-        this.appUsers.push(element.displayName);
+        if(element.userId !== this.user){
+          this.appUsers.push(element.displayName);
+        }
       });
     },
     setAppStatus() {
