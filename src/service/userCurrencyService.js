@@ -36,7 +36,30 @@ const currencyService = {
           console.log("Error getting documents: ", error);
           reject(error);
         });
-    })
+    });
+  },
+  getUserBoughtCurrency(userId, currencyId) {
+    return new Promise((resolve, reject) => {
+      firebase
+        .firestore()
+        .collection("UserCurrencies")
+        .where("uid", "==", userId)
+        .where("id", "==", currencyId)
+        .get()
+        .then(function(querySnapshot) {
+          querySnapshot.forEach(function(doc) {
+            let document = {};
+            document = doc.data();
+            document.id = doc.id;
+            console.log("Received document", document);
+            resolve(document);
+          });
+        })
+        .catch(function(error) {
+          console.log("Error getting documents: ", error);
+          reject(error);
+        });
+    });
   },
   updateUserBoughtCurrency(userBoughtCurrency) {
     firebase

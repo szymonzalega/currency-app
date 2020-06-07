@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Balance from '../views/Balance.vue'
+import CurrencyHistory from '../views/CurrencyHistory.vue'
 import auth from '@/auth'
 import AccountHistory from '../views/History.vue'
 Vue.use(VueRouter)
@@ -20,6 +21,14 @@ const routes = [
     path: '/balance',
     name: 'Balance',
     component: Balance,
+    meta: {
+      requireAuth: true
+    }
+  },
+  {
+    path: '/currencyHistory/:id',
+    name: 'CurrencyHistory',
+    component: CurrencyHistory,
     meta: {
       requireAuth: true
     }
