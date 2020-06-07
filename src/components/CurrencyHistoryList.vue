@@ -49,7 +49,7 @@ export default {
   name: "CurrencyHistory",
   data: function() {
     return {
-      mapOperationType: { BUY: "KUPNO", SELL: "SPRZEDAŻ" },
+      mapOperationType: { BUY: "Kupno", SELL: "Sprzedaz" },
       areDataLoaded: false,
       currencyData: {},
       items: [],
@@ -134,14 +134,14 @@ export default {
 
       doc.setFontSize(20);
       doc.setFontSize(8);
-      doc.text("Zapis historii audytu", 14, 30);
+      doc.text("Zapis historii waluty", 14, 30);
       doc.setTextColor(100);
 
       doc.autoTable({
         head: [
           {
             actionDate: "Data",
-            amount: "Ilość",
+            amount: "Ilosc",
             mid: "Kurs",
             operationType: "Operacja",
             result: "Kwota"
@@ -152,7 +152,7 @@ export default {
         showHead: "firstPage"
       });
       let date = moment().format("DD-MM-YYYY HH:mm:ss");
-      let filename = "AccountHistory" + date + ".pdf";
+      let filename = "operationHistory" + date + ".pdf";
       doc.save(filename);
     }
   }

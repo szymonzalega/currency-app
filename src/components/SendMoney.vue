@@ -126,9 +126,9 @@ export default {
       });
 
       let event =
-        "Użytkownik przesłał kwotę " +
+        "Uzytkownik przeslal kwote " +
         this.form.currencyAmount +
-        " złotych użytkownikowi " +
+        " zlotych uzytkownikowi " +
         this.form.receiver;
       let time = moment().format("DD-MM-YYYY HH:mm:ss");
 

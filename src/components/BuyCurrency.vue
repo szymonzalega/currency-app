@@ -144,7 +144,7 @@ export default {
         newAmount
       });
 
-      let event = `Użytkownik sprzedał walutę ${code} w ilości ${amount} po cenie ${mid}`;
+      let event = `Uzytkownik sprzedal walute ${code} w ilosci ${amount} po cenie ${mid}`;
       let time = moment().format("DD-MM-YYYY HH:mm:ss");
       this.$store.dispatch("audit/setAuditRecord", {
         event,
