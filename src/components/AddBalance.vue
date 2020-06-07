@@ -84,7 +84,7 @@ export default {
         "Użytkownik doładował konto kwotą " +
         this.form.currencyAmount +
         " złotych";
-      let time = moment().format("DD-MM-YYYY hh:mm:ss");
+      let time = moment().format("DD-MM-YYYY HH:mm:ss");
       this.$store.dispatch("audit/setAuditRecord", {
         event,
         user,

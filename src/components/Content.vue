@@ -98,7 +98,7 @@ export default {
       this.$store.dispatch("currency/deleteCurrencyWidget", { id });
       this.userCurrencies = this.$store.getters["currency/getUserCurrencies"];
       let event = "Widżet waluty został usunięty przez użytkownika";
-      let time = moment().format("DD-MM-YYYY hh:mm:ss");
+      let time = moment().format("DD-MM-YYYY HH:mm:ss");
       let user = this.user.uid;
       this.$store.dispatch("audit/setAuditRecord", {
         event,

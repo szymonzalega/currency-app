@@ -130,7 +130,7 @@ export default {
         this.form.currencyAmount +
         " złotych użytkownikowi " +
         this.form.receiver;
-      let time = moment().format("DD-MM-YYYY hh:mm:ss");
+      let time = moment().format("DD-MM-YYYY HH:mm:ss");
 
       this.$store.dispatch("audit/setAuditRecord", {
         event,

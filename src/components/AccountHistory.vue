@@ -162,7 +162,7 @@ export default {
         startY: 40,
         showHead: "firstPage"
       });
-      let date = moment().format("DD-MM-YYYY hh:mm:ss");
+      let date = moment().format("DD-MM-YYYY HH:mm:ss");
       let filename = "AccountHistory" + date + ".pdf";
       doc.save(filename);
     }

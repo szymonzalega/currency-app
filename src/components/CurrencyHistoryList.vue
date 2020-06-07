@@ -1,41 +1,39 @@
 <template>
-   
   <div class="currency-history">
     <view-name name="Historia operacji" />
     <div v-if="areDataLoaded">
       <b-container>
-    <b-row style="padding:30px">
-    <b-col lg="6" class="my-1">
-            <b-button @click="printToPDF"> Wydrukuj do pdf </b-button>
-      </b-col>
-    </b-row>
-<!-- Main table element -->
-    <b-table dark
-      show-empty
-      small
-      stacked="md"
-      :items="items"
-      :fields="fields"
-      :current-page="currentPage"
-      :per-page="perPage"
-      :filter="filter"
-      :filterIncludedFields="filterOn"
-      :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDesc"
-      :sort-direction="sortDirection"
-      @filtered="onFiltered"
-    >   
-
-      <template v-slot:row-details="row">
-        <b-card>
-          <ul>
-            <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-          </ul>
-        </b-card>
-      </template>
-    </b-table>
-    
-  </b-container>
+        <b-row style="padding:30px">
+          <b-col lg="6" class="my-1">
+            <b-button @click="printToPDF">Wydrukuj do pdf</b-button>
+          </b-col>
+        </b-row>
+        <!-- Main table element -->
+        <b-table
+          dark
+          show-empty
+          small
+          stacked="md"
+          :items="items"
+          :fields="fields"
+          :current-page="currentPage"
+          :per-page="perPage"
+          :filter="filter"
+          :filterIncludedFields="filterOn"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          :sort-direction="sortDirection"
+          @filtered="onFiltered"
+        >
+          <template v-slot:row-details="row">
+            <b-card>
+              <ul>
+                <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
+              </ul>
+            </b-card>
+          </template>
+        </b-table>
+      </b-container>
     </div>
   </div>
 </template>
@@ -51,20 +49,35 @@ export default {
   name: "CurrencyHistory",
   data: function() {
     return {
-        mapOperationType: {BUY:'KUPNO',SELL:'SPRZEDAŻ'},
-        areDataLoaded: false,
-        currencyData: {},
-        items: [],
-        fields: [
-          { key: 'actionDate', label: 'Data', sortable: true, sortDirection: 'desc' },
-          { key: 'amount', label: 'Ilość', sortable: true, sortDirection: 'desc' },
-          { key: 'mid', label: 'Kurs', sortable: true, sortDirection: 'desc' },
-          { key: 'operationType', label: 'Operacja', sortable: true, sortDirection: 'desc' },
-          { key: 'result', label: 'Kwota', sortable: true, class: 'text-center' },
-        ],
-        sortBy: 'actionDate',
-        sortDesc: false,
-        sortDirection: 'asc'
+      mapOperationType: { BUY: "KUPNO", SELL: "SPRZEDAŻ" },
+      areDataLoaded: false,
+      currencyData: {},
+      items: [],
+      fields: [
+        {
+          key: "actionDate",
+          label: "Data",
+          sortable: true,
+          sortDirection: "desc"
+        },
+        {
+          key: "amount",
+          label: "Ilość",
+          sortable: true,
+          sortDirection: "desc"
+        },
+        { key: "mid", label: "Kurs", sortable: true, sortDirection: "desc" },
+        {
+          key: "operationType",
+          label: "Operacja",
+          sortable: true,
+          sortDirection: "desc"
+        },
+        { key: "result", label: "Kwota", sortable: true, class: "text-center" }
+      ],
+      sortBy: "actionDate",
+      sortDesc: false,
+      sortDirection: "asc"
     };
   },
   props: {
@@ -81,25 +94,28 @@ export default {
     getCurrencyData() {
       const user = this.$store.getters["user/user"];
       const userId = user.uid;
-      userCurrencyService.getUserBoughtCurrency(userId, this.currency).then(data => {
+      userCurrencyService
+        .getUserBoughtCurrency(userId, this.currency)
+        .then(data => {
           this.currencyData = data;
-         this.items = data.transactions.map(item => {
-          return {
-            operationType:this.mapOperationType[item.operationType],
-            result:`${item.result} PLN`,
-            mid:`${item.mid} PLN`,
-            actionDate:item.actionDate,
-            amount:item.amount
-          }
-         })
-          
+          this.items = data.transactions.map(item => {
+            return {
+              operationType: this.mapOperationType[item.operationType],
+              result: `${item.result} PLN`,
+              mid: `${item.mid} PLN`,
+              actionDate: item.actionDate,
+              amount: item.amount
+            };
+          });
+
           console.log(data);
-          
+
           this.areDataLoaded = true;
-      }).catch(error => {
+        })
+        .catch(error => {
           console.error(error);
           this.areDataLoaded = true;
-      });
+        });
     },
     printToPDF() {
       var body = [];
@@ -123,18 +139,23 @@ export default {
 
       doc.autoTable({
         head: [
-          { actionDate:"Data", amount: "Ilość", mid: "Kurs",operationType: "Operacja",result:"Kwota" }
+          {
+            actionDate: "Data",
+            amount: "Ilość",
+            mid: "Kurs",
+            operationType: "Operacja",
+            result: "Kwota"
+          }
         ] /******** STAŁY NAGŁÓWEK DLA WYKRESÓW  ************/,
         body: body,
         startY: 40,
         showHead: "firstPage"
       });
-      let date = moment().format("DD-MM-YYYY hh:mm:ss");
+      let date = moment().format("DD-MM-YYYY HH:mm:ss");
       let filename = "AccountHistory" + date + ".pdf";
       doc.save(filename);
     }
-    }
-
+  }
 };
 </script>
 

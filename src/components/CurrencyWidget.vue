@@ -122,7 +122,7 @@ export default {
       });
 
       let event = "Ustawienia waluty" + code + "zostały zmienione";
-      let time = moment().format("DD-MM-YYYY hh:mm:ss");
+      let time = moment().format("DD-MM-YYYY HH:mm:ss");
       this.$store.dispatch("audit/setAuditRecord", {
         event,
         user,
