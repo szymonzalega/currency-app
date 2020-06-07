@@ -26,7 +26,7 @@
         </div>
         <div class="currencyWidget__exchangeRate exchangeRate">
           <div class="exchangeRate--label">Aktualny kurs:</div>
-          <div class="exchangeRate--value">{{currency.rates[0].mid}}&nbsp;PLN</div>
+          <div class="exchangeRate--value">{{currentRates}}&nbsp;PLN</div>
         </div>
         <!-- dane -->
         <currency-price v-bind:currencyData="currency"></currency-price>
@@ -50,7 +50,8 @@ export default {
       widgetOption: "LAST_DAYS",
       widgetSettingsModel: {},
       areDataLoaded: false,
-      isError: false
+      isError: false,
+      currentRates: null
     };
   },
   props: {
@@ -72,6 +73,7 @@ export default {
   },
   created() {
     this.widgetSettingsModel = this.data.options;
+    this.fetchOneCurrency();
     this.fetchCurrencyData(this.widgetSettingsModel);
   },
   methods: {
@@ -86,6 +88,16 @@ export default {
       this.fetchCurrencyData(data);
       this.closeSettings();
       this.updateUserCurrency(data);
+    },
+    fetchOneCurrency() {
+      let { table, code } = this.data;
+      fetch(
+        `http://api.nbp.pl/api/exchangerates/rates/${table}/${code}/?format=json`
+      )
+        .then(r => r.json())
+        .then(response => {
+          this.currentRates = response.rates[0].mid;
+        });
     },
     fetchCurrencyData(options) {
       const getUrl = options => {
