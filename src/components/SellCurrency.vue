@@ -1,8 +1,7 @@
 <template>
   <div>
     <!-- <b-button class="sellCurrency" @click="$bvModal.show(`${modalId}`)">Sprzedaj walutę</b-button> -->
-          <b-icon @click="$bvModal.show(`${modalId}`)" icon="graph-down" font-scale="1.3"></b-icon>
-
+    <b-icon @click="$bvModal.show(`${modalId}`)" icon="graph-down" font-scale="1.3"></b-icon>
 
     <b-modal
       v-bind:id="modalId"
@@ -60,13 +59,13 @@ export default {
     };
   },
   mounted() {
-      this.modalId = `modal-sell-currency${this.data.id}`;
+    this.modalId = `modal-sell-currency${this.data.id}`;
   },
   created() {
     this.getUserBalance();
   },
   updated() {
-      this.form.allAmount = this.currencyAmount;
+    this.form.allAmount = this.currencyAmount;
   },
   computed: {
     result() {
@@ -133,14 +132,20 @@ export default {
         newAmount
       });
 
-      let event = "Użytkownik sprzedał walutę" + code + "w ilości" + amount + "po cenie" + mid;
-      let time = moment().format('MMMM Do YYYY, h:mm:ss a');
+      let event =
+        "Użytkownik sprzedał walutę" +
+        code +
+        "w ilości" +
+        amount +
+        "po cenie" +
+        mid;
+      let time = moment().format("DD-MM-YYYY hh:mm:ss");
       this.$store.dispatch("audit/setAuditRecord", {
         event,
         user,
         time
       });
-      
+
       //TODO zrobic zapis tego i odjac od salda konta
       this.$nextTick(() => {
         this.$bvModal.hide(this.modalId);

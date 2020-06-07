@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <b-row style="padding:30px">
-    <b-col lg="6" class="my-1">
+      <b-col lg="6" class="my-1">
         <b-form-group
           label="Filter"
           label-cols-sm="3"
@@ -25,12 +25,13 @@
       </b-col>
 
       <b-col lg="6" class="my-1">
-            <b-button> Wydrukuj do pdf </b-button>
+        <b-button @click="printToPDF">Wydrukuj do pdf</b-button>
       </b-col>
     </b-row>
 
     <!-- Main table element -->
-    <b-table dark
+    <b-table
+      dark
       show-empty
       small
       stacked="md"
@@ -44,8 +45,7 @@
       :sort-desc.sync="sortDesc"
       :sort-direction="sortDirection"
       @filtered="onFiltered"
-    >   
-
+    >
       <template v-slot:row-details="row">
         <b-card>
           <ul>
@@ -55,7 +55,7 @@
       </template>
     </b-table>
     <b-row>
-              <b-col sm="5" md="6" class="my-1">
+      <b-col sm="5" md="6" class="my-1">
         <b-form-group
           label="Per page"
           label-cols-sm="6"
@@ -66,12 +66,7 @@
           label-for="perPageSelect"
           class="mb-0"
         >
-          <b-form-select
-            v-model="perPage"
-            id="perPageSelect"
-            size="sm"
-            :options="pageOptions"
-          ></b-form-select>
+          <b-form-select v-model="perPage" id="perPageSelect" size="sm" :options="pageOptions"></b-form-select>
         </b-form-group>
       </b-col>
 
@@ -84,67 +79,93 @@
           size="sm"
           class="my-0"
         ></b-pagination>
-      </b-col>  
+      </b-col>
     </b-row>
   </b-container>
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        items: [],
-        fields: [
-          { key: 'time', label: 'Data', sortable: true, sortDirection: 'desc' },
-          { key: 'event', label: 'Event', sortable: true, class: 'text-center' },
-        ],
-        totalRows: 1,
-        currentPage: 1,
-        perPage: 20,
-        pageOptions: [5, 10, 15, 20, 25, 30, 35],
-        sortBy: '',
-        sortDesc: false,
-        sortDirection: 'asc',
-        filter: null,
-        filterOn: [],
-      }
-    },
-    created() {
-        console.log('created')
-        let userId = this.$store.getters["user/user"].uid;
-        console.log(userId)
-         this.$store
-        .dispatch("audit/getAuditRecords", userId)
-        .then(() => {
-          this.items = this.$store.getters[
-            "audit/getAudit"
-          ];
-            this.totalRows = this.items.length
+import * as jsPDF from "jspdf";
+import "jspdf-autotable";
+import * as moment from "moment";
+export default {
+  data() {
+    return {
+      items: [],
+      fields: [
+        { key: "time", label: "Data", sortable: true, sortDirection: "desc" },
+        { key: "event", label: "Event", sortable: true, class: "text-center" }
+      ],
+      totalRows: 1,
+      currentPage: 1,
+      perPage: 20,
+      pageOptions: [5, 10, 15, 20, 25, 30, 35],
+      sortBy: "time",
+      sortDesc: true,
+      sortDirection: "asc",
+      filter: null,
+      filterOn: []
+    };
+  },
+  created() {
+    let userId = this.$store.getters["user/user"].uid;
+    this.$store.dispatch("audit/getAuditRecords", userId).then(() => {
+      this.items = this.$store.getters["audit/getAudit"];
+      this.totalRows = this.items.length;
+    });
+  },
+  computed: {
+    sortOptions() {
+      return this.fields
+        .filter(f => f.sortable)
+        .map(f => {
+          return { text: f.label, value: f.key };
         });
+    }
+  },
+  methods: {
+    info(item, index, button) {
+      this.infoModal.title = `Row index: ${index}`;
+      this.infoModal.content = JSON.stringify(item, null, 2);
+      this.$root.$emit("bv::show::modal", this.infoModal.id, button);
     },
-    computed: {
-      sortOptions() {
-        return this.fields
-          .filter(f => f.sortable)
-          .map(f => {
-            return { text: f.label, value: f.key }
-          })
-      }
+    resetInfoModal() {
+      this.infoModal.title = "";
+      this.infoModal.content = "";
     },
-    methods: {
-      info(item, index, button) {
-        this.infoModal.title = `Row index: ${index}`
-        this.infoModal.content = JSON.stringify(item, null, 2)
-        this.$root.$emit('bv::show::modal', this.infoModal.id, button)
-      },
-      resetInfoModal() {
-        this.infoModal.title = ''
-        this.infoModal.content = ''
-      },
-      onFiltered(filteredItems) {
-        this.totalRows = filteredItems.length
-        this.currentPage = 1
-      },
+    onFiltered(filteredItems) {
+      this.totalRows = filteredItems.length;
+      this.currentPage = 1;
+    },
+    printToPDF() {
+      var body = [];
+      this.items.forEach(function(ratae) {
+        body.push({
+          data: ratae.time,
+          cena: ratae.event
+        });
+      });
+
+      var doc = new jsPDF();
+      require("jspdf-autotable");
+
+      doc.setFontSize(20);
+      doc.setFontSize(8);
+      doc.text("Zapis historii audytu", 14, 30);
+      doc.setTextColor(100);
+
+      doc.autoTable({
+        head: [
+          { data: "data", cena: "Komentarz" }
+        ] /******** STAŁY NAGŁÓWEK DLA WYKRESÓW  ************/,
+        body: body,
+        startY: 40,
+        showHead: "firstPage"
+      });
+      let date = moment().format("DD-MM-YYYY hh:mm:ss");
+      let filename = "AccountHistory" + date + ".pdf";
+      doc.save(filename);
     }
   }
+};
 </script>

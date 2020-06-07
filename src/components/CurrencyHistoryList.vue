@@ -6,7 +6,7 @@
       <b-container>
     <b-row style="padding:30px">
     <b-col lg="6" class="my-1">
-            <b-button> Wydrukuj do pdf </b-button>
+            <b-button @click="printToPDF"> Wydrukuj do pdf </b-button>
       </b-col>
     </b-row>
 <!-- Main table element -->
@@ -41,6 +41,9 @@
 </template>
 
 <script>
+import * as jsPDF from "jspdf";
+import "jspdf-autotable";
+import * as moment from "moment";
 import ViewName from "./ViewName.vue";
 import userCurrencyService from "../service/userCurrencyService";
 
@@ -97,6 +100,38 @@ export default {
           console.error(error);
           this.areDataLoaded = true;
       });
+    },
+    printToPDF() {
+      var body = [];
+      this.items.forEach(function(ratae) {
+        body.push({
+          actionDate: ratae.actionDate,
+          amount: ratae.amount,
+          mid: ratae.mid,
+          operationType: ratae.operationType,
+          result: ratae.result
+        });
+      });
+
+      var doc = new jsPDF();
+      require("jspdf-autotable");
+
+      doc.setFontSize(20);
+      doc.setFontSize(8);
+      doc.text("Zapis historii audytu", 14, 30);
+      doc.setTextColor(100);
+
+      doc.autoTable({
+        head: [
+          { actionDate:"Data", amount: "Ilość", mid: "Kurs",operationType: "Operacja",result:"Kwota" }
+        ] /******** STAŁY NAGŁÓWEK DLA WYKRESÓW  ************/,
+        body: body,
+        startY: 40,
+        showHead: "firstPage"
+      });
+      let date = moment().format("DD-MM-YYYY hh:mm:ss");
+      let filename = "AccountHistory" + date + ".pdf";
+      doc.save(filename);
     }
     }
 
