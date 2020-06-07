@@ -1,6 +1,6 @@
 <template>
   <div id="currencyHistory">
-    <Header data="HEADER COMPONENT" />CurrencyHistory
+    <Header data="HEADER COMPONENT" />
     <CurrencyHistoryList v-bind:currency="id" />
   </div>
 </template>
