@@ -1,5 +1,4 @@
 import balanceService from "../../service/balanceService";
-import { v4 as uuid } from 'uuid';
 
 const state = () => ({
   balance: null,
@@ -18,9 +17,6 @@ const mutations = {
   ADD_USER_BALANCE(state, balance) {
     state.balance = balance;
   },
-  SET_AUDIT_RECORD(state, payload) {
-    state.audit.push(payload);
-  },
   TRANSFER_MONEY(state, balance) {
     state.balance = balance;
   }
@@ -34,11 +30,6 @@ const actions = {
     balanceService.storeUserBalance(payload);
 
     commit("ADD_USER_BALANCE", payload.currencyAmount)
-  },
-  setAuditRecord({commit}, payload) {
-    let documentId = uuid();
-    balanceService.storeAuditRecord(payload, documentId);
-    commit("SET_AUDIT_RECORD", payload);
   },
   setUserBalance({commit}, payload) {
     let currentBalance = {user: payload.user, currencyAmount: payload.newAmount };

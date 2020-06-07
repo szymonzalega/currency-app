@@ -6,7 +6,6 @@
     <widget-error v-if="isError"></widget-error>
 
     <div v-if="areDataLoaded">
-      <!-- <pre>{{data}}</pre> -->
       <div class="userCurrencyWidget__titleRow">
         <div class="optionIcon">
           <sell-currency v-bind:data="data" v-bind:currencyAmount="amount" />

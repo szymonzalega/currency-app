@@ -1,6 +1,8 @@
 <template>
   <div>
-    <b-button class="sellCurrency" @click="$bvModal.show(`${modalId}`)">Sprzedaj walutę</b-button>
+    <!-- <b-button class="sellCurrency" @click="$bvModal.show(`${modalId}`)">Sprzedaj walutę</b-button> -->
+          <b-icon @click="$bvModal.show(`${modalId}`)" icon="graph-down" font-scale="1.3"></b-icon>
+
 
     <b-modal
       v-bind:id="modalId"
@@ -37,6 +39,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
+import * as moment from "moment";
 
 const enoughAmount = (value, vm) => {
   return vm.amount <= vm.allAmount;
@@ -130,6 +133,14 @@ export default {
         newAmount
       });
 
+      let event = "Użytkownik sprzedał walutę" + code + "w ilości" + amount + "po cenie" + mid;
+      let time = moment().format('MMMM Do YYYY, h:mm:ss a');
+      this.$store.dispatch("audit/setAuditRecord", {
+        event,
+        user,
+        time
+      });
+      
       //TODO zrobic zapis tego i odjac od salda konta
       this.$nextTick(() => {
         this.$bvModal.hide(this.modalId);

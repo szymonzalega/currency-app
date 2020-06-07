@@ -1,9 +1,9 @@
 <template>
   <div>
-    <b-button class="transferMoney" v-b-modal.transferMoney>Wyślij pieniądze</b-button>
+    <b-button class="transferMoney" @click="openModal">Wyślij pieniądze</b-button>
     <b-modal
       id="transferMoney"
-      ref="modal"
+      ref="transferMoney"
       title="Wyślij pieniądze"
       @show="resetModal"
       @hidden="resetModal"
@@ -24,7 +24,7 @@
           <b-form-input
             v-model="$v.form.currencyAmount.$model"
             min="1"
-            :max="actualAmountStatus"
+            :max="this.form.userBalance"
             id="currencyAmount"
             size="sm"
             :state="validateState('currencyAmount')"
@@ -32,6 +32,10 @@
           />
           <div class="invalid" v-if="!$v.form.currencyAmount.required">Pole jest wymagane</div>
           <div class="invalid" v-if="!$v.form.currencyAmount.minValue">Minimalna kwota to 1 PLN</div>
+            <div
+            class="invalid"
+            v-if="!$v.form.currencyAmount.enoughMoney"
+          >Kwota całkowita przekracza dostępne środki</div>
         </b-form-group>
       </form>
     </b-modal>
@@ -41,7 +45,15 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, minValue } from "vuelidate/lib/validators";
-import { datetimeNow } from "../shared/time";
+import * as moment from "moment";
+
+const enoughMoney = (value, vm) => {
+  let amount = 0;
+  if (vm.currencyAmount) {
+    amount = parseInt(vm.currencyAmount);
+  }
+  return Math.round((amount + Number.EPSILON) * 100) / 100 < vm.userBalance;
+};
 
 export default {
   mixins: [validationMixin],
@@ -50,7 +62,8 @@ export default {
     return {
       form: {
         currencyAmount: null,
-        receiver: null
+        receiver: null,
+        userBalance: null
       },
       currencyAmount: null,
       receiver: null
@@ -66,7 +79,8 @@ export default {
     form: {
       currencyAmount: {
         required,
-        minValue: minValue(1)
+        minValue: minValue(1),
+        enoughMoney
       },
       receiver: {
         required
@@ -74,6 +88,11 @@ export default {
     }
   },
   methods: {
+    openModal(){
+      console.log(this.appUsers)
+      this.form.userBalance = this.$store.getters["balance/getUserBalance"];
+      this.$refs['transferMoney'].show()
+    },
     validateState(name) {
       const { $dirty, $error } = this.$v.form[name];
       return $dirty ? !$error : null;
@@ -96,7 +115,9 @@ export default {
         x => x.displayName === this.form.receiver
       ).userId;
       let amount = this.form.currencyAmount;
-      let newAmount = parseInt(this.actualAmountStatus) - parseInt(amount);
+      let actualAccountStatus = this.form.userBalance;
+      let newAmount = parseInt(actualAccountStatus) - parseInt(amount);      
+      
       this.$store.dispatch("balance/transferMoney", {
         amount,
         user,
@@ -109,18 +130,21 @@ export default {
         this.form.currencyAmount +
         " złotych użytkownikowi " +
         this.form.receiver;
-      let time = datetimeNow();
-      this.$store.dispatch("balance/setAuditRecord", {
+      let time = moment().format('MMMM Do YYYY, h:mm:ss a');
+
+      this.$store.dispatch("audit/setAuditRecord", {
         event,
         user,
         time
       });
+      let currentuserName = this.$store.getters["user/user"].displayName;
+
       event =
         "Użytkownik otrzymał kwotę " +
         this.form.currencyAmount +
         " złotych od użytkownika" +
-        this.currentUser.displayName;
-      this.$store.dispatch("balance/setAuditRecord", {
+        currentuserName;
+      this.$store.dispatch("audit/setAuditRecord", {
         event,
         user: userToTransferMoney
       });

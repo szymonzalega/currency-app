@@ -84,7 +84,7 @@ export default {
         this.form.currencyAmount +
         " złotych";
       let time = datetimeNow();
-      this.$store.dispatch("balance/setAuditRecord", {
+      this.$store.dispatch("audit/setAuditRecord", {
         event,
         user,
         time
