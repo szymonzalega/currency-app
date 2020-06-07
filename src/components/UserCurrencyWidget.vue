@@ -152,7 +152,16 @@ export default {
       const getUrl = () => {
         let { table, code } = this.data;
         let today = this.getParsedTodayDate();
-        return `https://api.nbp.pl/api/exchangerates/rates/${table}/${code}/${this.data.transactions[0].actionDate}/${today}/?format=json`;
+        let firstTransaction = new Date(this.data.transactions[0].actionDate);
+        let dayOfWeek = firstTransaction.getDay();
+        if (dayOfWeek === 0) {
+          firstTransaction.setDate(firstTransaction.getDate() - 2);
+        } else if (dayOfWeek === 6) {
+          firstTransaction.setDate(firstTransaction.getDate() - 1);
+        }
+        return `https://api.nbp.pl/api/exchangerates/rates/${table}/${code}/${this.parseDate(
+          firstTransaction
+        )}/${today}/?format=json`;
       };
       this.areDataLoaded = false;
       fetch(getUrl())
@@ -167,6 +176,9 @@ export default {
     },
     removeWidget() {
       this.$emit("removeWidget", this.data.id);
+    },
+    parseDate(date) {
+      return date.toISOString().substring(0, 10);
     },
     getParsedTodayDate() {
       let today = new Date();
