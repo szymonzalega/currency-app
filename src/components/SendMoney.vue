@@ -32,7 +32,7 @@
           />
           <div class="invalid" v-if="!$v.form.currencyAmount.required">Pole jest wymagane</div>
           <div class="invalid" v-if="!$v.form.currencyAmount.minValue">Minimalna kwota to 1 PLN</div>
-            <div
+          <div
             class="invalid"
             v-if="!$v.form.currencyAmount.enoughMoney"
           >Kwota całkowita przekracza dostępne środki</div>
@@ -88,10 +88,10 @@ export default {
     }
   },
   methods: {
-    openModal(){
-      console.log(this.appUsers)
+    openModal() {
+      console.log(this.appUsers);
       this.form.userBalance = this.$store.getters["balance/getUserBalance"];
-      this.$refs['transferMoney'].show()
+      this.$refs["transferMoney"].show();
     },
     validateState(name) {
       const { $dirty, $error } = this.$v.form[name];
@@ -116,8 +116,8 @@ export default {
       ).userId;
       let amount = this.form.currencyAmount;
       let actualAccountStatus = this.form.userBalance;
-      let newAmount = parseInt(actualAccountStatus) - parseInt(amount);      
-      
+      let newAmount = parseInt(actualAccountStatus) - parseInt(amount);
+
       this.$store.dispatch("balance/transferMoney", {
         amount,
         user,
@@ -130,7 +130,7 @@ export default {
         this.form.currencyAmount +
         " złotych użytkownikowi " +
         this.form.receiver;
-      let time = moment().format('MMMM Do YYYY, h:mm:ss a');
+      let time = moment().format("DD-MM-YYYY hh:mm:ss");
 
       this.$store.dispatch("audit/setAuditRecord", {
         event,
@@ -146,7 +146,8 @@ export default {
         currentuserName;
       this.$store.dispatch("audit/setAuditRecord", {
         event,
-        user: userToTransferMoney
+        user: userToTransferMoney,
+        time
       });
       this.$nextTick(() => {
         this.$bvModal.hide("transferMoney");

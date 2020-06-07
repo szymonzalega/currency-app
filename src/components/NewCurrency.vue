@@ -103,7 +103,7 @@ export default {
       });
 
       let event = "Użytkownik dodał nową walutę" + selected;
-      let time = moment().format('MMMM Do YYYY, h:mm:ss a');
+      let time = moment().format("DD-MM-YYYY hh:mm:ss");
       this.$store.dispatch("audit/setAuditRecord", {
         event,
         user,

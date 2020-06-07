@@ -30,7 +30,8 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, minValue } from "vuelidate/lib/validators";
-import { datetimeNow } from "../shared/time";
+import * as moment from "moment";
+
 export default {
   mixins: [validationMixin],
   name: "AddBalance",
@@ -83,7 +84,7 @@ export default {
         "Użytkownik doładował konto kwotą " +
         this.form.currencyAmount +
         " złotych";
-      let time = datetimeNow();
+      let time = moment().format("DD-MM-YYYY hh:mm:ss");
       this.$store.dispatch("audit/setAuditRecord", {
         event,
         user,

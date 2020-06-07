@@ -47,7 +47,7 @@
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import * as moment from "moment";
- 
+
 const enoughMoney = (value, vm) => {
   let currencyMid = 0;
   let amount = 0;
@@ -144,8 +144,14 @@ export default {
         newAmount
       });
 
-      let event = "Użytkownik sprzedał walutę" + code + "w ilości" + amount + "po cenie" + mid;
-      let time = moment().format('MMMM Do YYYY, h:mm:ss a');
+      let event =
+        "Użytkownik sprzedał walutę" +
+        code +
+        "w ilości" +
+        amount +
+        "po cenie" +
+        mid;
+      let time = moment().format("DD-MM-YYYY hh:mm:ss");
       this.$store.dispatch("audit/setAuditRecord", {
         event,
         user,

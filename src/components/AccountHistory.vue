@@ -86,8 +86,8 @@
 
 <script>
 import * as jsPDF from "jspdf";
-import 'jspdf-autotable'
-import * as moment from 'moment'
+import "jspdf-autotable";
+import * as moment from "moment";
 export default {
   data() {
     return {
@@ -100,8 +100,8 @@ export default {
       currentPage: 1,
       perPage: 20,
       pageOptions: [5, 10, 15, 20, 25, 30, 35],
-      sortBy: "",
-      sortDesc: false,
+      sortBy: "time",
+      sortDesc: true,
       sortDirection: "asc",
       filter: null,
       filterOn: []
@@ -147,15 +147,11 @@ export default {
       });
 
       var doc = new jsPDF();
-      require('jspdf-autotable');
+      require("jspdf-autotable");
 
       doc.setFontSize(20);
       doc.setFontSize(8);
-      doc.text(
-        "Zapis historii audytu",
-        14,
-        30
-      );
+      doc.text("Zapis historii audytu", 14, 30);
       doc.setTextColor(100);
 
       doc.autoTable({
@@ -166,8 +162,8 @@ export default {
         startY: 40,
         showHead: "firstPage"
       });
-      let date = moment().format('MMMM Do YYYY, h:mm:ss a');
-      let filename = "AccountHistory"+date+".pdf";
+      let date = moment().format("DD-MM-YYYY hh:mm:ss");
+      let filename = "AccountHistory" + date + ".pdf";
       doc.save(filename);
     }
   }
