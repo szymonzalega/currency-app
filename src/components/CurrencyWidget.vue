@@ -151,7 +151,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .currencyWidget {
-  height: 350px;
   width: 530px;
   margin: 1em;
   padding: 10px;
