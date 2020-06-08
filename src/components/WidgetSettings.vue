@@ -34,11 +34,13 @@
               value="LAST_DAYS"
               aria-describedby="last-days-input-feedback"
               size="sm"
+              min="1"
               type="number"
             ></b-form-input>
           </div>
           <div class="invalid" v-if="!$v.form.last.required">Pole jest wymagane</div>
           <div class="invalid" v-if="!$v.form.last.maxValue">Maksymalna liczba dni to 255</div>
+          <div class="invalid" v-if="!$v.form.last.minValue">Minimalna liczba dni to 1</div>
         </div>
 
         <div class="options options__dateScope" v-if="widgetSettingsModel.type === 'DATE_SCOPE'">
@@ -79,7 +81,7 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import { required, maxValue } from "vuelidate/lib/validators";
+import { required, maxValue, minValue } from "vuelidate/lib/validators";
 
 const diffBetweenDates = (value, vm) => {
   const date1 = new Date(vm.dateFrom);
@@ -107,7 +109,8 @@ export default {
     form: {
       last: {
         required,
-        maxValue: maxValue(255)
+        maxValue: maxValue(255),
+        minValue: minValue(1)
       },
       dateTo: {
         required,
