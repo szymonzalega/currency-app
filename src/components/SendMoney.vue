@@ -140,9 +140,9 @@ export default {
       let currentuserName = this.$store.getters["user/user"].displayName;
 
       event =
-        "Użytkownik otrzymał kwotę " +
+        "Uzytkownik otrzymal kwotę " +
         this.form.currencyAmount +
-        " złotych od użytkownika" +
+        " zlotych od uzytkownika" +
         currentuserName;
       this.$store.dispatch("audit/setAuditRecord", {
         event,
