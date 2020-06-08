@@ -37,3 +37,11 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="scss"> 
+
+canvas {
+  max-width: 100%;
+}
+
+</style>

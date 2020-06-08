@@ -138,6 +138,7 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    flex-wrap: wrap;
   }
   &__widget-row {
     display: flex;

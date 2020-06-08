@@ -64,6 +64,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+
+@media only screen and (max-width: 430px) {
+  .header .header__userPhoto {
+    display: none;
+  }
+  
+  .header .header__balance > span:first-child {
+    display: none;
+  }
+}
+
 .header {
   display: flex;
   flex-direction: row;
