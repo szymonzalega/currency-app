@@ -17,7 +17,7 @@
     "firebase": "^7.14.0",
     "firebaseui": "^4.5.0",
     "gh-pages": "^2.2.0",
-    "jspdf": "^1.5.3",
+    "jspdf": "^2.3.1",
     "jspdf-autotable": "^3.5.3",
     "moment": "^2.26.0",
     "uuid": "^8.0.0",
