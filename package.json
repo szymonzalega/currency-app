@@ -19,7 +19,7 @@
     "gh-pages": "^2.2.0",
     "jspdf": "^1.5.3",
     "jspdf-autotable": "^3.5.3",
-    "moment": "^2.26.0",
+    "moment": "^2.29.2",
     "uuid": "^8.0.0",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",
